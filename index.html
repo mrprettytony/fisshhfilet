@@ -2,88 +2,59 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FISSHHFILET TRAILERS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FISSHHFILET</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0}body{background:#0a0a0a;color:#fff;font-family:serif;padding:20px}
-h1{text-align:center;letter-spacing:6px;margin:20px 0}
-.feed{display:grid;gap:16px;max-width:600px;margin:0 auto}
-.card{background:#151515;border-radius:12px;overflow:hidden;border:1px solid #222}
-.card img,.card video{width:100%;display:block}
-.card p{padding:10px;font-family:sans-serif;font-size:13px;color:#aaa}
-.btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#D4AF37;color:#000;border:0;padding:18px 40px;border-radius:99px;font-weight:bold;letter-spacing:2px;z-index:50}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:end;z-index:100}
-.sheet.open{display:flex}.panel{background:#111;border-radius:24px 24px 0 0;width:100%;padding:24px}
-.label{display:block;background:#222;border-radius:99px;padding:20px;text-align:center;margin:10px 0;letter-spacing:2px;font-weight:bold;cursor:pointer}
-.label.gold{background:#D4AF37;color:#000}
-.label input{position:absolute;left:-9999px;opacity:0.01}
-.preview{max-width:600px;margin:20px auto;color:#888;font-size:12px;font-family:sans-serif;text-align:center}
-.badge{font-size:10px;background:#D4AF37;color:#000;padding:3px 8px;border-radius:99px;margin-left:8px;vertical-align:middle}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#070707;color:#fff;font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:90px}
+.top{position:sticky;top:0;z-index:40;background:rgba(7,7,7,.96);backdrop-filter:blur(12px);display:flex;justify-content:center;align-items:center;padding:22px 18px;border-bottom:1px solid #151515}
+.logo{font-family:'Playfair Display',serif;letter-spacing:8px;font-size:26px}
+.feed{max-width:520px;margin:0 auto;padding:12px 10px;display:grid;gap:16px}
+.card{background:#101010;border:1px solid #1e1e1e;border-radius:22px;overflow:hidden}
+.card img,.card video{width:100%;display:block;aspect-ratio:4/5;object-fit:cover}
+.actions{display:flex;gap:8px;padding:12px 14px}
+.act{width:38px;height:38px;border-radius:99px;background:#161616;border:1px solid #222;display:grid;place-items:center;font-size:14px}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#080808;border-top:1px solid #1a1a1a;display:flex;justify-content:space-around;align-items:center;padding:8px 6px 12px}
+.nav{font-size:10px;text-align:center;color:#555;display:grid;gap:4px;justify-items:center}
+.nav.active{color:#fff}
+.plus{width:64px;height:64px;background:#D4AF37;border-radius:99px;display:grid;place-items:center;color:#000;font-size:36px;margin-top:-28px;border:3px solid #070707;box-shadow:0 6px 24px rgba(212,175,55,.35)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;display:none;align-items:flex-end}
+.sheet.open{display:flex}
+.panel{background:#111;border-radius:24px 24px 0 0;width:100%;max-width:520px;margin:0 auto;padding:22px 20px 30px;border:1px solid #222}
+.label{display:block;background:#1c1c1c;border-radius:99px;padding:18px;text-align:center;margin:10px 0;letter-spacing:2px;font-weight:700;cursor:pointer;border:1px solid #2a2a2a;font-size:13px}
+.label.gold{background:#D4AF37;color:#000;border-color:#D4AF37}
+.label input{position:absolute;left:-9999px;width:1px;height:1px;opacity:0.01}
 </style>
 </head>
 <body>
-<h1>FISSHHFILET <span class="badge">TRAILERS 0:04-5:00</span></h1>
-<div id="preview" class="preview">Upload trailers 4 sec to 5 min</div>
-<div id="feed" class="feed"></div>
-<button class="btn" id="open">+ UPLOAD</button>
-
+<div class="top"><div class="logo">FISSHHFILET</div></div>
+<div id="feed" class="feed">
+<div class="card"><img src="https://images.unsplash.com/photo-1551816230-ef5deaed4a26?w=800&q=80"><div class="actions"><div class="act">♡</div><div class="act">◯</div><div class="act">↗</div><div style="margin-left:auto" class="act">⛶</div></div></div>
+</div>
+<div class="bottom">
+<div class="nav active"><div style="font-size:20px">⌂</div>Home</div>
+<div class="nav"><div style="font-size:20px">◍</div>Discover</div>
+<div class="plus" id="open">+</div>
+<div class="nav"><div style="font-size:20px">((•))</div>LiveBitez</div>
+<div class="nav"><div style="font-size:20px">○</div>Profile</div>
+</div>
 <div class="sheet" id="sheet">
 <div class="panel">
-<h2 style="letter-spacing:4px;margin-bottom:6px">Upload Trailer</h2>
-<p style="color:#666;font-family:sans-serif;font-size:12px;margin-bottom:18px">Android 16 fixed — 0:04 min 5:00 max</p>
-
-<label class="label gold" for="photoInput">+ UPLOAD PHOTO GALLERY
-<input id="photoInput" type="file" accept="image/*" multiple>
-</label>
-
-<label class="label" for="videoInput">▷ UPLOAD TRAILER 0:04-5:00
-<input id="videoInput" type="file" accept="video/mp4,video/quicktime,video/*">
-</label>
-
-<div class="label" style="background:transparent;border:1px solid #333" id="close">CANCEL</div>
-<p id="timing" style="color:#D4AF37;font-size:11px;margin-top:14px;text-align:center;font-family:sans-serif">TRAILER RULE: 4 seconds to 5:00</p>
+<h2 style="font-family:'Playfair Display',serif;letter-spacing:4px">Upload</h2>
+<label class="label gold" for="photoInput">+ UPLOAD PHOTO GALLERY<input id="photoInput" type="file" accept="image/*" multiple></label>
+<label class="label" for="videoInput">▷ UPLOAD VIDEO 00:00-05:00<input id="videoInput" type="file" accept="video/mp4,video/quicktime,video/*"></label>
+<div class="label" style="background:transparent" id="close">CANCEL</div>
 </div>
 </div>
-
 <script>
-const feed=document.getElementById('feed');
-const preview=document.getElementById('preview');
-const sheet=document.getElementById('sheet');
+const feed=document.getElementById('feed');const sheet=document.getElementById('sheet');
 document.getElementById('open').onclick=()=>sheet.classList.add('open');
 document.getElementById('close').onclick=()=>sheet.classList.remove('open');
 sheet.onclick=e=>{if(e.target===sheet)sheet.classList.remove('open')};
-
-function addCard(url,type,name,dur){
- const d=document.createElement('div');d.className='card';
- if(type.startsWith('image')) d.innerHTML=`<img src="${url}"><p>${name} — POSTER</p>`;
- else d.innerHTML=`<video src="${url}" controls playsinline></video><p>${name} — TRAILER ${dur}s</p>`;
- feed.prepend(d);
-}
-
-document.getElementById('photoInput').addEventListener('change',e=>{
- const files=[...e.target.files];
- preview.innerHTML=`Selected ${files.length} posters`;
- files.forEach(f=>{ addCard(URL.createObjectURL(f),f.type,f.name,''); });
- sheet.classList.remove('open');
-});
-
-document.getElementById('videoInput').addEventListener('change',e=>{
- const f=e.target.files[0]; if(!f) return;
- const url=URL.createObjectURL(f);
- const v=document.createElement('video'); v.preload='metadata'; v.src=url;
- v.onloadedmetadata=()=>{
-  const sec=Math.round(v.duration);
-  const fmt=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
-  if(sec<4||sec>300){
-    alert(`TRAILER must be 0:04 to 5:00 — yours is ${fmt} (${sec}s)`);
-    preview.innerHTML=`❌ ${f.name} is ${fmt} — needs 0:04 to 5:00`;
-    return;
-  }
-  preview.innerHTML=`✅ ${f.name} ${fmt} OK — trailer ready`;
-  addCard(url,f.type,f.name,fmt);
-  sheet.classList.remove('open');
- };
-});
+function addCard(url,type){const d=document.createElement('div');d.className='card';if(type.startsWith('image'))d.innerHTML=`<img src="${url}"><div class="actions"><div class="act">♡</div><div class="act">◯</div><div class="act">↗</div><div style="margin-left:auto" class="act">⛶</div></div>`;else d.innerHTML=`<video src="${url}" controls playsinline></video><div class="actions"><div class="act">♡</div><div class="act">◯</div><div class="act">↗</div><div style="margin-left:auto" class="act">⛶</div></div>`;feed.prepend(d);}
+document.getElementById('photoInput').addEventListener('change',e=>{[...e.target.files].forEach(f=>addCard(URL.createObjectURL(f),f.type));sheet.classList.remove('open');});
+document.getElementById('videoInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);const v=document.createElement('video');v.preload='metadata';v.src=url;v.muted=true;v.onloadedmetadata=()=>{const sec=Math.round(v.duration);if(sec>300){alert(`Max 5:00 — yours ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`);return;}addCard(url,f.type);sheet.classList.remove('open');};});
 </script>
 </body>
 </html>
