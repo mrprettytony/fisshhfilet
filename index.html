@@ -1,399 +1,1855 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HOUSE v3 950</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>HOUSE</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{fontFamily:{bebas:['Bebas Neue'],serif:['Instrument Serif'],grotesk:['Space Grotesk']},colors:{paper:'#F6F1E7',ink:'#080808',gold:'#E7C35A',blood:'#FF2D55'}}}}</script>
+
 <style>
-*{ -webkit-tap-highlight-color:transparent }
-body{ background:#080808; color:#F6F1E7; font-family:'Space Grotesk'; }
-.pill{ background:#F6F1E7; color:#080808; border-radius:999px; display:flex; justify-content:space-between; padding:13px 18px; font-weight:700; text-transform:uppercase; font-size:12px; }
-.upload-label{ display:flex; justify-content:center; border:1.5px dashed rgba(255,255,255,.2); border-radius:18px; padding:20px; cursor:pointer; position:relative; }
-.upload-label input{ position:absolute; opacity:0; width:1px; height:1px; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#080808;color:#f6f1e7;font-family:Arial,Helvetica,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+img,video{display:block;max-width:100%}
+.no-scroll::-webkit-scrollbar{display:none}
+.no-scroll{scrollbar-width:none}
+
+.serif{font-family:Georgia,"Times New Roman",serif}
+.display{font-family:Impact,"Arial Black",sans-serif;letter-spacing:.04em}
+
+.card{
+ background:#f6f1e7;
+ color:#080808;
+ border-radius:26px;
+ overflow:hidden;
+ box-shadow:0 20px 70px rgba(0,0,0,.45)
+}
+
+.gold{color:#e7c35a}
+.bg-gold{background:#e7c35a}
+.border-gold{border-color:#e7c35a}
+
+.glass{
+ background:rgba(12,12,12,.82);
+ backdrop-filter:blur(20px);
+ -webkit-backdrop-filter:blur(20px);
+}
+
+.pill{
+ display:inline-flex;
+ align-items:center;
+ gap:10px;
+ padding:11px 15px;
+ border-radius:999px;
+ background:#f6f1e7;
+ color:#080808;
+ font-size:11px;
+ font-weight:800;
+ letter-spacing:.04em;
+ white-space:nowrap;
+}
+
+.editable.editing{
+ outline:2px solid #e7c35a;
+ outline-offset:5px;
+ border-radius:8px;
+}
+
+.modal{
+ position:fixed;
+ inset:0;
+ z-index:100;
+ background:rgba(0,0,0,.88);
+ backdrop-filter:blur(18px);
+ -webkit-backdrop-filter:blur(18px);
+ overflow-y:auto;
+ padding:18px;
+}
+
+.hidden{display:none!important}
+
+.field{
+ width:100%;
+ background:#fff;
+ border:1px solid rgba(0,0,0,.12);
+ border-radius:16px;
+ padding:14px;
+ color:#080808;
+ outline:none;
+}
+
+.field:focus{border-color:#080808}
+
+.upload{
+ border:2px dashed rgba(0,0,0,.18);
+ border-radius:20px;
+ padding:25px 15px;
+ text-align:center;
+ background:rgba(0,0,0,.025);
+}
+
+.upload input{
+ position:absolute;
+ width:1px;
+ height:1px;
+ opacity:0;
+}
+
+.mediaTile{
+ position:relative;
+ aspect-ratio:1;
+ border-radius:15px;
+ overflow:hidden;
+ background:#111;
+}
+
+.mediaTile img,
+.mediaTile video{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+}
+
+.deleteMedia{
+ position:absolute;
+ top:6px;
+ right:6px;
+ width:28px;
+ height:28px;
+ border-radius:50%;
+ background:#000;
+ color:#fff;
+ border:1px solid rgba(255,255,255,.2);
+}
+
+.like.active{color:#ff2d55}
+
+.bottomNav{
+ height:76px;
+ padding-bottom:env(safe-area-inset-bottom);
+}
+
+.story{
+ width:58px;
+ flex:0 0 58px;
+ text-align:center;
+ font-size:9px;
+ overflow:hidden;
+}
+
+.story img{
+ width:52px;
+ height:52px;
+ border-radius:50%;
+ object-fit:cover;
+ margin:auto;
+ border:2px solid #e7c35a;
+ padding:2px;
+}
+
+.progress{
+ height:3px;
+ background:#333;
+}
+
+.progress span{
+ display:block;
+ height:100%;
+ background:#e7c35a;
+ width:0;
+}
+
+.toast{
+ position:fixed;
+ left:50%;
+ bottom:95px;
+ transform:translateX(-50%) translateY(20px);
+ background:#f6f1e7;
+ color:#080808;
+ padding:12px 18px;
+ border-radius:999px;
+ font-size:12px;
+ font-weight:bold;
+ z-index:200;
+ opacity:0;
+ pointer-events:none;
+ transition:.25s;
+}
+
+.toast.show{
+ opacity:1;
+ transform:translateX(-50%) translateY(0);
+}
 </style>
 </head>
+
 <body>
-<div id="ageGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-6">
-<div class="bg-[#F6F1E7] text-black rounded-[28px] p-8 max-w-[420px] w-full">
-<div class="font-bebas text-[44px] leading-[0.9]">ADULTS ONLY<br>Enjoy Bar</div>
-<p class="mt-3 text-[13px]">Horror comedy Demna Gucci Netflix Instagram 21+</p>
-<button onclick="document.getElementById('ageGate').style.display='none';localStorage.setItem('age_verified','21')" class="mt-6 bg-black text-white rounded-full h-14 w-full font-bebas">I AM 21+ ENTER</button>
-</div>
-</div>
-<header class="h-[60px] flex items-center justify-between px-4 border-b border-white/10">
-<span class="font-serif text-[22px] tracking-[0.2em]">FISSHHFILET</span>
-<span class="text-[10px] border border-white/20 rounded-full px-3 py-1">X fi§ X IS LIVE • HERO</span>
+
+<!-- AGE GATE -->
+<section id="ageGate" class="fixed inset-0 z-[300] bg-black flex items-center justify-center p-5">
+ <div class="w-full max-w-md bg-[#f6f1e7] text-black rounded-[30px] p-7">
+  <div class="flex justify-between gap-4 mb-8">
+   <div>
+    <div class="display text-5xl leading-none">ADULTS<br>ONLY</div>
+    <div class="text-[10px] tracking-[.3em] mt-3 opacity-60">PRIVATE ENTERTAINMENT HOUSE</div>
+   </div>
+   <div class="text-[10px] border border-black/20 rounded-full px-3 py-2 h-fit">
+    21+
+   </div>
+  </div>
+
+  <p class="text-sm leading-6 opacity-75 mb-7">
+   This platform contains age-restricted entertainment areas.
+   You must be 21 or older to enter.
+  </p>
+
+  <button onclick="enterHouse()"
+   class="w-full h-14 rounded-full bg-black text-white display tracking-widest">
+   I AM 21+ — ENTER
+  </button>
+
+  <button onclick="leaveHouse()"
+   class="w-full h-12 rounded-full border border-black/20 mt-3 text-xs font-bold">
+   EXIT
+  </button>
+
+  <p class="text-[10px] opacity-45 mt-5 leading-5">
+   Entertainment only. No real-money gambling. Age-restricted areas are
+   limited to lawful adult entertainment and fashion content.
+  </p>
+ </div>
+</section>
+
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 glass border-b border-white/10">
+ <div class="max-w-[1500px] mx-auto h-[62px] px-4 flex items-center justify-between">
+
+  <button onclick="goHome()" class="serif text-[23px] tracking-[.18em]">
+   FISSHHFILET
+  </button>
+
+  <div class="flex items-center gap-2">
+   <button onclick="openSearch()"
+    class="w-10 h-10 rounded-full border border-white/15">
+    ⌕
+   </button>
+
+   <button onclick="openCreate()"
+    class="hidden md:block bg-[#f6f1e7] text-black rounded-full px-6 h-10 text-xs font-bold">
+    CREATE
+   </button>
+  </div>
+ </div>
 </header>
-<main class="max-w-[700px] mx-auto p-4 pb-[100px]">
-<div id="feed" class="space-y-6">
-<div class="bg-[#F6F1E7] text-black rounded-[28px] overflow-hidden">
-<img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800" class="w-full aspect-[4/5] object-cover"/>
-<div class="p-5"><p class="font-serif text-[28px] leading-[0.95]">Beautiful things happen<br>when you go looking.</p><p class="mt-3 text-[13px] opacity-70" contenteditable="true">Tap to edit caption — HOUSE v3</p></div>
-</div>
-<div class="bg-[#0E0E12] rounded-[28px] overflow-hidden border border-[#FF2D55]/30">
-<div class="bg-[#F6F1E7] text-black p-4 flex justify-between"><span class="font-bebas text-[18px]">ADULTS ONLY • Enjoy Bar</span><span class="bg-[#FF2D55] text-white text-[10px] px-2 py-1 rounded-full">21+ SOFTCORE</span></div>
-<div class="relative"><img src="https://images.unsplash.com/photo-1518834107812-67b0b288f498?w=800" class="w-full aspect-[16/9] object-cover"/><div class="absolute inset-0 grid place-items-center"><div class="bg-[#FF2D55] text-white px-6 py-3 rounded-[12px] border-2 border-white rotate-[-2deg]"><p class="font-bebas text-[26px]">YOU'RE GONNA NEED<br>A BIGGER BOATI</p><p class="font-bold">$89</p></div></div></div>
-</div>
-<div class="bg-[#F6F1E7] text-black rounded-[28px] overflow-hidden">
-<video id="heroVideo" class="w-full aspect-[9/16] object-cover" muted loop playsinline poster="https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=800"><source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4"/></video>
-<div class="p-4"><p contenteditable="true" class="text-[13px]">Midnight at the docks 00:00-05:00 Tap to edit</p><button onclick="toggleVideo()" class="mt-3 bg-black text-white rounded-full px-5 h-10 text-[12px]">PLAY / PAUSE</button></div>
-</div>
-<div class="grid grid-cols-2 gap-3">
-<div class="bg-[#15151A] rounded-[20px] overflow-hidden"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400" class="aspect-[3/4] object-cover w-full"/><div class="p-3"><p class="font-bebas">HIBISCUS $26</p></div></div>
-<div class="bg-[#15151A] rounded-[20px] overflow-hidden"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400" class="aspect-[3/4] object-cover w-full"/><div class="p-3"><p class="font-bebas">LUXUS MESH $290</p></div></div>
-</div>
-<div class="bg-[#121212] rounded-[24px] p-5 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">LUXURY • 11</p><div id="luxuryPills" class="flex flex-wrap gap-2"></div></div>
-<div class="bg-[#121212] rounded-[24px] p-5 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">FOOD • 4</p><div id="foodPills" class="flex flex-wrap gap-2"></div></div>
-<div class="bg-[#121212] rounded-[24px] p-5 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">CULTURE + GAME • 13</p><div id="culturePills" class="flex flex-wrap gap-2"></div></div>
-<div class="bg-[#121212] rounded-[24px] p-5 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">GAME ROOM • KALSHI PICKS • 21+ NO REAL MONEY</p><div class="space-y-3"><div class="bg-[#1A1A1A] rounded-[16px] p-4 flex justify-between"><div><p class="font-bold text-[13px]">Will outdoor dining stay year-round?</p><p class="text-[10px] opacity-60">NYC Editorial</p></div><button class="bg-[#F6F1E7] text-black rounded-full px-4 h-8 text-[11px] font-bold">YES 62%</button></div><div class="bg-[#1A1A1A] rounded-[16px] p-4 flex justify-between"><div><p class="font-bold text-[13px]">Next tide over 6ft in Soho?</p><p class="text-[10px] opacity-60">Ocean games</p></div><button class="bg-[#F6F1E7] text-black rounded-full px-4 h-8 text-[11px] font-bold">NO 54%</button></div></div></div>
-</div>
+
+
+<div class="max-w-[1500px] mx-auto flex">
+
+
+<!-- DESKTOP SIDEBAR -->
+<aside class="hidden lg:flex w-[250px] shrink-0 sticky top-[62px] h-[calc(100vh-62px)]
+ flex-col p-4 border-r border-white/10">
+
+ <div class="space-y-1">
+
+  <button onclick="goHome()"
+   class="w-full text-left px-4 py-3 rounded-full bg-[#f6f1e7] text-black font-bold text-sm">
+   ⌂ HOME
+  </button>
+
+  <button onclick="showSection('discover')"
+   class="w-full text-left px-4 py-3 rounded-full hover:bg-white/10 text-sm">
+   ◉ DISCOVER
+  </button>
+
+  <button onclick="showSection('theater')"
+   class="w-full text-left px-4 py-3 rounded-full hover:bg-white/10 text-sm">
+   ▶ THEATER
+  </button>
+
+  <button onclick="showSection('shop')"
+   class="w-full text-left px-4 py-3 rounded-full hover:bg-white/10 text-sm">
+   ◇ SHOP
+  </button>
+
+  <button onclick="showSection('games')"
+   class="w-full text-left px-4 py-3 rounded-full hover:bg-white/10 text-sm">
+   ⚡ GAME ROOM
+  </button>
+
+  <button onclick="showSection('vault')"
+   class="w-full text-left px-4 py-3 rounded-full hover:bg-white/10 text-sm">
+   ◫ PRIVATE VAULT
+  </button>
+
+  <button onclick="openCreate()"
+   class="w-full h-12 rounded-full bg-gold text-black display mt-4">
+   + CREATE
+  </button>
+ </div>
+
+ <div class="mt-auto bg-white/5 border border-white/10 rounded-2xl p-4">
+  <div class="flex items-center justify-between">
+   <span class="text-[10px] tracking-[.25em]">EDIT EVERYTHING</span>
+   <button onclick="toggleEdit()" id="editButton"
+    class="w-12 h-7 rounded-full bg-white/15 relative">
+    <span id="editDot"
+     class="absolute left-1 top-1 w-5 h-5 rounded-full bg-white transition-all">
+    </span>
+   </button>
+  </div>
+
+  <p class="text-[10px] opacity-45 mt-3 leading-5">
+   Turn editing on, then tap any editable text.
+  </p>
+ </div>
+</aside>
+
+
+<!-- MAIN -->
+<main class="flex-1 min-w-0 pb-[95px] lg:pb-0">
+
+<!-- STORIES -->
+<section class="border-b border-white/10 px-4 py-4 overflow-x-auto no-scroll">
+ <div id="stories" class="flex gap-4 min-w-max"></div>
+</section>
+
+
+<!-- FEED -->
+<section id="feed" class="max-w-[760px] mx-auto px-3 md:px-5 py-6 space-y-6">
+
+
+<!-- FEATURE -->
+<article class="card">
+
+ <div class="relative">
+  <img
+   src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1400&q=85"
+   class="w-full aspect-[4/5] object-cover"
+   alt="Editorial">
+
+  <div class="absolute top-4 left-4">
+   <span class="bg-black/75 text-white rounded-full px-3 py-2 text-[10px] tracking-[.2em]">
+    EDITORIAL • NEW YORK
+   </span>
+  </div>
+
+  <div class="absolute bottom-0 inset-x-0 p-6 pt-28 text-white
+   bg-gradient-to-t from-black/90 via-black/30 to-transparent">
+
+   <h1 class="editable serif text-4xl md:text-5xl leading-none"
+    data-editable>
+    Beautiful things happen when you go looking.
+   </h1>
+
+   <p class="editable text-[10px] tracking-[.25em] mt-4 opacity-70"
+    data-editable>
+    DISCOVERY • TONIGHT • LIVE
+   </p>
+  </div>
+ </div>
+
+ <div class="p-4 flex items-center justify-between">
+  <div class="flex gap-2">
+   <button onclick="toggleLike(this)"
+    class="like w-10 h-10 rounded-full bg-black/10 text-xl">
+    ♡
+   </button>
+
+   <button onclick="commentPost(this)"
+    class="w-10 h-10 rounded-full bg-black/10">
+    ◌
+   </button>
+
+   <button onclick="sharePost()"
+    class="w-10 h-10 rounded-full bg-black/10">
+    ↗
+   </button>
+  </div>
+
+  <button onclick="savePost(this)"
+   class="saveButton border border-black/15 rounded-full px-5 h-10 text-xs font-bold">
+   SAVE
+  </button>
+ </div>
+
+ <div class="px-5 pb-6">
+  <p class="editable text-[15px] leading-6" data-editable>
+   A place for culture, style, entertainment, discovery, conversation and the things worth finding.
+  </p>
+ </div>
+</article>
+
+
+<!-- VIDEO -->
+<article class="card">
+
+ <div class="relative bg-black">
+
+  <video
+   class="feedVideo w-full aspect-[9/16] md:aspect-[4/5] object-cover"
+   muted
+   loop
+   playsinline
+   preload="metadata"
+   poster="https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=1000&q=80">
+
+   <source
+    src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    type="video/mp4">
+  </video>
+
+  <button onclick="toggleFeedVideo(this)"
+   class="absolute inset-0 grid place-items-center">
+   <span class="w-16 h-16 rounded-full bg-black/55 text-white grid place-items-center">
+    ▶
+   </span>
+  </button>
+
+  <div class="absolute top-4 left-4 flex gap-2">
+   <span class="bg-black/75 text-white rounded-full px-3 py-2 text-[10px]">
+    VIDEO
+   </span>
+   <span class="bg-gold text-black rounded-full px-3 py-2 text-[10px] font-bold">
+    NOW
+   </span>
+  </div>
+
+  <div class="absolute bottom-0 inset-x-0">
+   <div class="progress">
+    <span></span>
+   </div>
+  </div>
+ </div>
+
+ <div class="p-5">
+  <h2 class="editable serif text-3xl" data-editable>
+   Midnight at the docks.
+  </h2>
+
+  <p class="editable text-sm opacity-65 mt-2" data-editable>
+   A five-minute cut. Watch, save, share or continue exploring.
+  </p>
+ </div>
+</article>
+
+
+<!-- DISCOVER -->
+<section id="discover" class="bg-[#111] rounded-[25px] border border-white/10 p-5">
+
+ <div class="flex justify-between items-end mb-5">
+  <div>
+   <div class="text-[10px] tracking-[.3em] opacity-50">DISCOVER</div>
+   <h2 class="editable serif text-4xl mt-1" data-editable>
+    Find something.
+   </h2>
+  </div>
+
+  <button onclick="shuffleDiscover()"
+   class="border border-white/15 rounded-full px-4 py-2 text-[10px]">
+   SHUFFLE
+  </button>
+ </div>
+
+ <div id="discoverGrid" class="grid grid-cols-2 gap-3"></div>
+</section>
+
+
+<!-- SHOP -->
+<section id="shop" class="bg-[#111] rounded-[25px] border border-white/10 p-5">
+
+ <div class="mb-5">
+  <div class="text-[10px] tracking-[.3em] opacity-50">SHOP</div>
+  <h2 class="editable serif text-4xl mt-1" data-editable>
+   Objects worth finding.
+  </h2>
+  <p class="text-[11px] opacity-45 mt-2">
+   Product discovery • no prices displayed
+  </p>
+ </div>
+
+ <div id="productGrid" class="grid grid-cols-2 gap-3"></div>
+</section>
+
+
+<!-- GAME ROOM -->
+<section id="games" class="bg-[#111] rounded-[25px] border border-white/10 p-5">
+
+ <div class="text-[10px] tracking-[.3em] opacity-50">
+  GAME ROOM • 21+
+ </div>
+
+ <h2 class="editable serif text-4xl mt-1" data-editable>
+  Make a pick.
+ </h2>
+
+ <div id="gamesGrid" class="space-y-3 mt-5"></div>
+
+ <p class="text-[10px] opacity-35 mt-5">
+  Entertainment only. No real-money transactions.
+ </p>
+</section>
+
+
+<!-- VAULT -->
+<section id="vault" class="bg-[#111] rounded-[25px] border border-white/10 p-5">
+
+ <div class="flex justify-between items-center">
+  <div>
+   <div class="text-[10px] tracking-[.3em] opacity-50">PRIVATE</div>
+   <h2 class="editable serif text-4xl mt-1" data-editable>
+    Vault.
+   </h2>
+  </div>
+
+  <span class="bg-[#ff2d55] text-white rounded-full px-3 py-2 text-[9px] font-bold">
+   21+
+  </span>
+ </div>
+
+ <p class="editable text-sm opacity-55 mt-3" data-editable>
+  Age-restricted fashion and entertainment.
+ </p>
+
+ <button onclick="openCreate(true)"
+  class="mt-5 w-full h-12 rounded-full bg-white text-black text-xs font-bold">
+  ADD TO PRIVATE VAULT
+ </button>
+
+ <div id="vaultGrid" class="grid grid-cols-2 gap-3 mt-5"></div>
+</section>
+
+
+<!-- LINK DIRECTORY -->
+<section class="bg-[#111] rounded-[25px] border border-white/10 p-5">
+
+ <div class="text-[10px] tracking-[.3em] opacity-50 mb-4">
+  REAL-WORLD DIRECTORY
+ </div>
+
+ <div id="linkDirectory" class="flex flex-wrap gap-2"></div>
+</section>
+
+</section>
 </main>
-<nav class="fixed bottom-0 inset-x-0 bg-black border-t border-white/10 flex justify-around h-[76px] items-center">
-<span class="text-[10px] font-bold">HOME • X fi§ X</span><span class="text-[10px] opacity-60">DISCOVER</span><button onclick="openCreate()" class="w-14 h-14 rounded-full bg-[#E7C35A] text-black text-[28px]">+</button><span class="text-[10px] opacity-60">GAMES</span><span class="text-[10px] opacity-60">VAULT</span>
+</div>
+
+
+<!-- MOBILE NAV -->
+<nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 glass border-t border-white/10 bottomNav
+ flex items-center justify-around">
+
+ <button onclick="goHome()" class="text-center">
+  <div class="text-xl">⌂</div>
+  <div class="text-[8px]">HOME</div>
+ </button>
+
+ <button onclick="showSection('discover')" class="text-center">
+  <div class="text-xl">◉</div>
+  <div class="text-[8px]">DISCOVER</div>
+ </button>
+
+ <button onclick="openCreate()"
+  class="w-14 h-14 rounded-full bg-gold text-black text-3xl -mt-8">
+  +
+ </button>
+
+ <button onclick="showSection('games')" class="text-center">
+  <div class="text-xl">⚡</div>
+  <div class="text-[8px]">GAMES</div>
+ </button>
+
+ <button onclick="showSection('vault')" class="text-center">
+  <div class="text-xl">◫</div>
+  <div class="text-[8px]">VAULT</div>
+ </button>
 </nav>
-<div id="createModal" class="hidden fixed inset-0 z-[60] bg-black/90 p-4 overflow-auto">
-<div class="bg-[#F6F1E7] text-black rounded-[28px] p-6 max-w-[600px] mx-auto">
-<div class="flex justify-between"><h3 class="font-bebas text-[22px]">CREATE • PUBLISH</h3><button onclick="closeCreate()" class="w-8 h-8 rounded-full border border-black/20">✕</button></div>
-<div class="mt-6 border-2 border-dashed border-black/20 rounded-[20px] p-6 text-center">
-<p class="font-bebas">Choose photo or video</p><p class="text-[11px] opacity-60 mt-1">JPG PNG WEBP MP4 MOV 00:00-05:00</p>
-<div class="grid grid-cols-2 gap-3 mt-4">
-<label class="upload-label bg-white border border-black/10"><input id="photoInput" type="file" accept="image/*" multiple><span class="text-[11px] font-bold">UPLOAD PHOTO GALLERY</span></label>
-<label class="upload-label bg-white border border-black/10"><input id="videoInput" type="file" accept="video/*" multiple><span class="text-[11px] font-bold">UPLOAD VIDEO 1-5 MIN</span></label>
+
+
+<!-- CREATE MODAL -->
+<div id="createModal" class="modal hidden">
+
+ <div class="max-w-[760px] mx-auto bg-[#f6f1e7] text-black rounded-[28px] p-5 md:p-8">
+
+  <div class="flex justify-between items-center mb-6">
+   <h2 class="display text-3xl">CREATE</h2>
+   <button onclick="closeCreate()"
+    class="w-10 h-10 rounded-full border border-black/15">
+    ✕
+   </button>
+  </div>
+
+  <div class="upload">
+
+   <div class="display text-2xl">
+    ADD MEDIA
+   </div>
+
+   <p class="text-xs opacity-55 mt-2 mb-5">
+    Photos, galleries and videos
+   </p>
+
+   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+    <label class="border border-black/10 rounded-2xl p-5 cursor-pointer">
+     <input id="photoInput" type="file" accept="image/*" multiple>
+     <b class="text-xs">UPLOAD PHOTOS</b>
+     <div class="text-[10px] opacity-50 mt-1">
+      Up to 100 photos per batch
+     </div>
+    </label>
+
+    <label class="border border-black/10 rounded-2xl p-5 cursor-pointer">
+     <input id="videoInput" type="file" accept="video/*" multiple>
+     <b class="text-xs">UPLOAD VIDEOS</b>
+     <div class="text-[10px] opacity-50 mt-1">
+      Up to 20 videos per batch
+     </div>
+    </label>
+
+   </div>
+  </div>
+
+  <div id="uploadStats" class="text-xs opacity-55 mt-4"></div>
+
+  <div id="previewGrid" class="grid grid-cols-3 gap-3 mt-4"></div>
+
+  <textarea id="captionInput"
+   class="field mt-5 min-h-[120px]"
+   placeholder="Write your caption..."></textarea>
+
+  <input id="creatorInput"
+   class="field mt-3"
+   placeholder="Creator / username">
+
+  <input id="categoryInput"
+   class="field mt-3"
+   placeholder="Category">
+
+  <button onclick="publishPost()"
+   class="w-full h-14 rounded-full bg-black text-white display mt-5">
+   PUBLISH
+  </button>
+
+  <div class="border-t border-black/10 mt-8 pt-6">
+
+   <div class="text-[10px] tracking-[.25em] font-bold">
+    PRIVATE VAULT • 21+
+   </div>
+
+   <label class="upload block mt-3 cursor-pointer">
+    <input id="adultInput" type="file" accept="image/*,video/*" multiple>
+    <b class="text-xs">ADD AGE-RESTRICTED MEDIA</b>
+   </label>
+
+  </div>
+ </div>
 </div>
-<div id="previewGrid" class="grid grid-cols-3 gap-2 mt-4"></div>
+
+
+<!-- SEARCH -->
+<div id="searchModal" class="modal hidden">
+
+ <div class="max-w-[700px] mx-auto bg-[#f6f1e7] text-black rounded-[28px] p-6">
+
+  <div class="flex justify-between items-center mb-5">
+   <h2 class="display text-3xl">SEARCH</h2>
+   <button onclick="closeSearch()"
+    class="w-10 h-10 rounded-full border border-black/15">
+    ✕
+   </button>
+  </div>
+
+  <input id="searchInput"
+   class="field"
+   placeholder="Search creators, posts, products or tags..."
+   oninput="runSearch()">
+
+  <div id="searchResults" class="mt-5 space-y-2"></div>
+ </div>
 </div>
-<textarea id="captionInput" class="w-full mt-4 border border-black/10 rounded-[16px] p-4 text-[13px] min-h-[90px]" placeholder="Tell the story..."></textarea>
-<button onclick="publishPost()" class="mt-4 bg-black text-white rounded-full h-12 w-full font-bebas">Publish To Feed</button>
-<div class="mt-6 border-t border-black/10 pt-4"><p class="text-[10px] tracking-[.2em] font-bold">ADULT VAULT 21+ SOFTCORE</p><label class="upload-label bg-white border border-black/10 mt-3"><input id="adultInput" type="file" accept="image/*,video/*" multiple><span class="text-[11px] font-bold">UPLOAD TO PRIVATE VAULT • AGE-RESTRICTED</span></label></div>
-</div>
-</div>
+
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+
 <script>
-const luxuryLinks = [
-["GUCCI","https://www.gucci.com"],
-["PRADA","https://www.prada.com"],
-["LOUIS VUITTON","https://www.louisvuitton.com"],
-["BOTTEGA VENETA","https://www.bottegaveneta.com"],
-["VALENTINO","https://www.valentino.com"],
-["HERMES","https://www.hermes.com"],
-["VAN CLEEF","https://www.vancleefarpels.com"],
-["YSL","https://www.ysl.com"],
-["TIFFANY","https://www.tiffany.com"],
-["SOTHEBYS","https://www.sothebys.com"],
-["FARFETCH","https://www.farfetch.com"]
-];
-const foodLinks = [
-["WHOLE FOODS","https://www.wholefoodsmarket.com"],
-["TRADER JOES","https://www.traderjoes.com"],
-["EREWHON","https://www.erewhon.com"],
-["VOODOO DOUGHNUTS","https://www.voodoodoughnut.com"]
-];
-const cultureLinks = [
-["APPLE MUSIC","https://music.apple.com"],
-["SPOTIFY","https://open.spotify.com"],
-["YOUTUBE","https://www.youtube.com"],
-["TARGET","https://www.target.com"],
-["TIKTOK","https://www.tiktok.com"],
-["X","https://www.x.com"],
-["FACEBOOK","https://www.facebook.com"],
-["TRUTH SOCIAL","https://truthsocial.com"],
-["PINTEREST","https://www.pinterest.com"],
-["EDITORIALIST","https://editorialist.com"],
-["KALSHI","https://kalshi.com"],
-["INSTAGRAM","https://instagram.com"],
-["THREADS","https://threads.net"]
-];
-function renderPills(id,list){
-const el=document.getElementById(id);
-let html="";
-for(let i=0;i<list.length;i++){
-let name=list[i][0];
-let url=list[i][1];
-html+=`<a href="${url}" target="_blank" class="pill">${name}<span class="w-7 h-7 rounded-full bg-black text-white grid place-items-center ml-3 text-[10px]">↗</span></a>`;
+
+/* =========================
+   APP DATA
+========================= */
+
+const APP_KEY = "fisshhfilet_house_data_v5";
+
+const defaultData = {
+
+ posts: [],
+
+ vault: [],
+
+ products: [
+  {
+   name:"ARCHIVE TOTE",
+   category:"OBJECT",
+   image:"https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=800&q=80",
+   link:"https://www.farfetch.com"
+  },
+  {
+   name:"EDITORIAL SUNGLASSES",
+   category:"STYLE",
+   image:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&q=80",
+   link:"https://www.farfetch.com"
+  },
+  {
+   name:"STUDIO CHAIR",
+   category:"HOME",
+   image:"https://images.unsplash.com/photo-1503602642458-232111445657?w=800&q=80",
+   link:"https://www.sothebys.com"
+  },
+  {
+   name:"TRAVEL OBJECT",
+   category:"TRAVEL",
+   image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
+   link:"https://www.farfetch.com"
+  }
+ ],
+
+ games:[
+  {
+   question:"Will outdoor dining stay popular through winter?",
+   options:["YES","NO"]
+  },
+  {
+   question:"Will a new cultural hotspot appear downtown?",
+   options:["YES","NO"]
+  },
+  {
+   question:"Will short-form video dominate tonight?",
+   options:["YES","NO"]
+  }
+ ],
+
+ links:[
+  ["GUCCI","https://www.gucci.com"],
+  ["PRADA","https://www.prada.com"],
+  ["LOUIS VUITTON","https://www.louisvuitton.com"],
+  ["HERMÈS","https://www.hermes.com"],
+  ["FARFETCH","https://www.farfetch.com"],
+  ["SOTHEBY'S","https://www.sothebys.com"],
+  ["WHOLE FOODS","https://www.wholefoodsmarket.com"],
+  ["SPOTIFY","https://open.spotify.com"],
+  ["YOUTUBE","https://www.youtube.com"],
+  ["PINTEREST","https://www.pinterest.com"],
+  ["INSTAGRAM","https://www.instagram.com"],
+  ["TIKTOK","https://www.tiktok.com"],
+  ["X","https://x.com"]
+ ]
+
+};
+
+
+let data = loadData();
+
+let stagedFiles = [];
+
+let editMode = false;
+
+
+/* =========================
+   STORAGE
+========================= */
+
+function loadData(){
+
+ try{
+
+  const saved = localStorage.getItem(APP_KEY);
+
+  if(saved){
+   return {...defaultData,...JSON.parse(saved)};
+  }
+
+ }catch(e){}
+
+ return structuredClone(defaultData);
 }
-el.innerHTML=html;
+
+
+function saveData(){
+
+ try{
+  localStorage.setItem(APP_KEY,JSON.stringify(data));
+ }catch(e){
+  console.warn("Storage limit reached");
+ }
 }
-renderPills('luxuryPills',luxuryLinks);
-renderPills('foodPills',foodLinks);
-renderPills('culturePills',cultureLinks);
-function openCreate(){document.getElementById('createModal').classList.remove('hidden');}
-function closeCreate(){document.getElementById('createModal').classList.add('hidden');}
-function toggleVideo(){
-const v=document.getElementById('heroVideo');
-if(v.paused){v.play();}else{v.pause();}
+
+
+/* =========================
+   AGE
+========================= */
+
+function enterHouse(){
+
+ localStorage.setItem("age_verified","21");
+
+ document.getElementById("ageGate").classList.add("hidden");
+
+ toast("Welcome.");
 }
-let staged=[];
+
+
+function leaveHouse(){
+
+ location.href="https://www.google.com";
+}
+
+
+if(localStorage.getItem("age_verified")==="21"){
+ document.getElementById("ageGate").classList.add("hidden");
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function toast(message){
+
+ const el=document.getElementById("toast");
+
+ el.textContent=message;
+ el.classList.add("show");
+
+ clearTimeout(window.toastTimer);
+
+ window.toastTimer=setTimeout(()=>{
+  el.classList.remove("show");
+ },2200);
+}
+
+
+/* =========================
+   STORIES
+========================= */
+
+const storyImages=[
+ "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80",
+ "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&q=80",
+ "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+ "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80",
+ "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80"
+];
+
+function renderStories(){
+
+ document.getElementById("stories").innerHTML=
+
+ storyImages.map((image,i)=>`
+
+ <button class="story" onclick="toast('Story ${i+1}')">
+
+  <img src="${image}" loading="lazy">
+
+  <div class="mt-1 opacity-70">
+   ${i===0?"LIVE":"DISCOVER"}
+  </div>
+
+ </button>
+
+ `).join("");
+}
+
+
+/* =========================
+   DISCOVER
+========================= */
+
+const discoverItems=[
+
+ ["STYLE","https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=700&q=80"],
+ ["CULTURE","https://images.unsplash.com/photo-1521334884684-d80222895322?w=700&q=80"],
+ ["TRAVEL","https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=700&q=80"],
+ ["FOOD","https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&q=80"],
+ ["NIGHT","https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=700&q=80"],
+ ["DESIGN","https://images.unsplash.com/photo-1503602642458-232111445657?w=700&q=80"]
+];
+
+
+function renderDiscover(){
+
+ document.getElementById("discoverGrid").innerHTML=
+
+ discoverItems.map(item=>`
+
+ <button onclick="toast('${item[0]}')"
+  class="relative aspect-square overflow-hidden rounded-2xl text-left">
+
+  <img src="${item[1]}"
+   loading="lazy"
+   class="w-full h-full object-cover">
+
+  <div class="absolute inset-x-0 bottom-0 p-3
+   bg-gradient-to-t from-black/80 to-transparent">
+
+   <span class="text-white text-[10px] font-bold tracking-[.2em]">
+    ${item[0]}
+   </span>
+
+  </div>
+ </button>
+
+ `).join("");
+}
+
+
+function shuffleDiscover(){
+
+ discoverItems.sort(()=>Math.random()-.5);
+
+ renderDiscover();
+
+ toast("Discovery shuffled.");
+}
+
+
+/* =========================
+   PRODUCTS
+========================= */
+
+function renderProducts(){
+
+ document.getElementById("productGrid").innerHTML=
+
+ data.products.map((p,i)=>`
+
+ <article class="bg-white/5 rounded-2xl overflow-hidden border border-white/10">
+
+  <img src="${p.image}"
+   loading="lazy"
+   class="w-full aspect-square object-cover">
+
+  <div class="p-3">
+
+   <div class="text-[9px] opacity-40 tracking-[.2em]">
+    ${escapeHTML(p.category)}
+   </div>
+
+   <div class="editable text-sm font-bold mt-1"
+    data-editable>
+    ${escapeHTML(p.name)}
+   </div>
+
+   <a href="${p.link}"
+    target="_blank"
+    rel="noopener"
+    class="block text-center bg-white text-black rounded-full h-10
+    leading-10 text-[10px] font-bold mt-3">
+    VIEW OBJECT
+   </a>
+
+  </div>
+
+ </article>
+
+ `).join("");
+}
+
+
+/* =========================
+   GAMES
+========================= */
+
+function renderGames(){
+
+ document.getElementById("gamesGrid").innerHTML=
+
+ data.games.map((g,i)=>`
+
+ <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+
+  <div class="editable text-sm font-bold"
+   data-editable>
+   ${escapeHTML(g.question)}
+  </div>
+
+  <div class="flex gap-2 mt-4">
+
+   ${g.options.map(option=>`
+
+    <button
+     onclick="pickGame(this,'${option}')"
+     class="flex-1 bg-white text-black rounded-full h-10 text-[11px] font-bold">
+
+     ${option}
+
+    </button>
+
+   `).join("")}
+
+  </div>
+
+ </div>
+
+ `).join("");
+}
+
+
+function pickGame(button,choice){
+
+ button.parentElement.querySelectorAll("button")
+  .forEach(b=>b.classList.remove("bg-gold"));
+
+ button.classList.add("bg-gold");
+
+ toast("Pick recorded: "+choice);
+}
+
+
+/* =========================
+   LINKS
+========================= */
+
+function renderLinks(){
+
+ document.getElementById("linkDirectory").innerHTML=
+
+ data.links.map(([name,url])=>`
+
+ <a href="${url}"
+  target="_blank"
+  rel="noopener"
+  class="pill">
+
+  ${escapeHTML(name)}
+
+  <span>↗</span>
+
+ </a>
+
+ `).join("");
+}
+
+
+/* =========================
+   CREATE
+========================= */
+
+function openCreate(vault=false){
+
+ document.getElementById("createModal").classList.remove("hidden");
+
+ if(vault){
+
+  document.getElementById("adultInput").focus();
+
+ }
+
+}
+
+
+function closeCreate(){
+
+ document.getElementById("createModal").classList.add("hidden");
+}
+
+
 function handleFiles(files){
-for(let i=0;i<files.length;i++){
-let file=files[i];
-let url=URL.createObjectURL(file);
-staged.push({url:url,type:file.type.startsWith('video')?'video':'photo',name:file.name});
-let grid=document.getElementById('previewGrid');
-let div=document.createElement('div');
-div.className='rounded-[12px] overflow-hidden aspect-square bg-black/10';
-if(file.type.startsWith('image')){
-div.innerHTML=`<img src="${url}" class="w-full h-full object-cover"/>`;
-}else{
-div.innerHTML=`<video src="${url}" class="w-full h-full object-cover" muted></video>`;
+
+ const incoming=Array.from(files);
+
+ const photos=stagedFiles.filter(f=>f.type.startsWith("image/")).length;
+ const videos=stagedFiles.filter(f=>f.type.startsWith("video/")).length;
+
+ for(const file of incoming){
+
+  if(file.type.startsWith("image/") && photos>=100){
+   toast("Photo batch limit reached.");
+   break;
+  }
+
+  if(file.type.startsWith("video/") && videos>=20){
+   toast("Video batch limit reached.");
+   break;
+  }
+
+  stagedFiles.push({
+   file,
+   url:URL.createObjectURL(file),
+   id:crypto.randomUUID()
+  });
+ }
+
+ renderPreview();
 }
-grid.appendChild(div);
+
+
+function renderPreview(){
+
+ const grid=document.getElementById("previewGrid");
+
+ grid.innerHTML="";
+
+ stagedFiles.forEach(item=>{
+
+  const tile=document.createElement("div");
+
+  tile.className="mediaTile";
+
+  if(item.file.type.startsWith("image/")){
+
+   tile.innerHTML=`
+    <img src="${item.url}">
+    <button class="deleteMedia"
+     onclick="removeStaged('${item.id}')">
+     ×
+    </button>
+   `;
+
+  }else{
+
+   tile.innerHTML=`
+    <video src="${item.url}" muted playsinline></video>
+    <button class="deleteMedia"
+     onclick="removeStaged('${item.id}')">
+     ×
+    </button>
+   `;
+
+  }
+
+  grid.appendChild(tile);
+
+ });
+
+ const photos=stagedFiles.filter(x=>x.file.type.startsWith("image/")).length;
+ const videos=stagedFiles.filter(x=>x.file.type.startsWith("video/")).length;
+
+ document.getElementById("uploadStats").textContent=
+ `${photos} photos • ${videos} videos selected`;
+
 }
+
+
+function removeStaged(id){
+
+ const item=stagedFiles.find(x=>x.id===id);
+
+ if(item)URL.revokeObjectURL(item.url);
+
+ stagedFiles=stagedFiles.filter(x=>x.id!==id);
+
+ renderPreview();
 }
-document.getElementById('photoInput').addEventListener('change',function(e){handleFiles(e.target.files);});
-document.getElementById('videoInput').addEventListener('change',function(e){handleFiles(e.target.files);});
-document.getElementById('adultInput').addEventListener('change',function(e){
-let files=e.target.files;
-for(let i=0;i<files.length;i++){
-let url=URL.createObjectURL(files[i]);
-let vault=JSON.parse(localStorage.getItem('vault')||'[]');
-vault.push({name:files[i].name,url:url});
-localStorage.setItem('vault',JSON.stringify(vault));
-}
-alert('Added to Vault 21+');
-});
+
+
+/* =========================
+   PUBLISH
+========================= */
+
 function publishPost(){
-let cap=document.getElementById('captionInput').value;
-if(cap===""){cap="New drop #housev3";}
-if(staged.length===0){alert('Upload photo or video first');return;}
-let feed=document.getElementById('feed');
-let first=staged[0];
-let article=document.createElement('div');
-article.className='bg-[#F6F1E7] text-black rounded-[28px] overflow-hidden';
-if(first.type==='video'){
-article.innerHTML=`<video src="${first.url}" class="w-full aspect-[4/5] object-cover" autoplay muted loop playsinline></video><div class="p-5"><p class="text-[14px]" contenteditable="true">${cap}</p></div>`;
-}else{
-article.innerHTML=`<img src="${first.url}" class="w-full aspect-[4/5] object-cover"/><div class="p-5"><p class="text-[14px]" contenteditable="true">${cap}</p></div>`;
+
+ if(!stagedFiles.length){
+
+  toast("Add at least one photo or video.");
+
+  return;
+ }
+
+ const caption=
+  document.getElementById("captionInput").value.trim()
+  ||"New discovery.";
+
+ const creator=
+  document.getElementById("creatorInput").value.trim()
+  ||"CREATOR";
+
+ const category=
+  document.getElementById("categoryInput").value.trim()
+  ||"DISCOVERY";
+
+
+ /*
+  Browser object URLs are used for immediate viewing.
+  The architecture is intentionally separated so a future
+  cloud-storage API can replace this section.
+ */
+
+ const post={
+  id:crypto.randomUUID(),
+  caption,
+  creator,
+  category,
+  created:Date.now(),
+  media:stagedFiles.map(x=>({
+   url:x.url,
+   type:x.file.type,
+   name:x.file.name
+  }))
+ };
+
+ data.posts.unshift(post);
+
+ saveData();
+
+ insertPost(post,true);
+
+ stagedFiles=[];
+
+ renderPreview();
+
+ document.getElementById("captionInput").value="";
+ document.getElementById("creatorInput").value="";
+ document.getElementById("categoryInput").value="";
+
+ closeCreate();
+
+ toast("Published.");
+
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
+
 }
-feed.prepend(article);
-staged=[];
-document.getElementById('previewGrid').innerHTML='';
-document.getElementById('captionInput').value='';
-closeCreate();
-window.scrollTo({top:0,behavior:'smooth'});
+
+
+/* =========================
+   RENDER USER POSTS
+========================= */
+
+function insertPost(post,prepend=false){
+
+ const article=document.createElement("article");
+
+ article.className="card";
+
+ const first=post.media[0];
+
+ article.innerHTML=`
+
+ <div class="relative bg-black">
+
+  ${
+   first.type.startsWith("video/")
+
+   ?
+
+   `<video
+     src="${first.url}"
+     class="w-full aspect-[4/5] object-cover"
+     controls
+     playsinline
+     loop
+     muted>
+    </video>`
+
+   :
+
+   `<img
+     src="${first.url}"
+     class="w-full aspect-[4/5] object-cover"
+     loading="lazy">`
+  }
+
+  <div class="absolute top-4 left-4">
+   <span class="bg-black/75 text-white rounded-full px-3 py-2 text-[9px]">
+    ${escapeHTML(post.category)}
+   </span>
+  </div>
+
+ </div>
+
+ <div class="p-5">
+
+  <div class="flex justify-between items-center mb-3">
+
+   <b class="editable text-xs"
+    data-editable>
+    ${escapeHTML(post.creator)}
+   </b>
+
+   <span class="text-[9px] opacity-40">
+    JUST NOW
+   </span>
+
+  </div>
+
+  <p class="editable text-[15px] leading-6"
+   data-editable>
+   ${escapeHTML(post.caption)}
+  </p>
+
+  <div class="flex gap-2 mt-5">
+
+   <button onclick="toggleLike(this)"
+    class="like w-10 h-10 rounded-full bg-black/10">
+    ♡
+   </button>
+
+   <button onclick="sharePost()"
+    class="w-10 h-10 rounded-full bg-black/10">
+    ↗
+   </button>
+
+   <button onclick="deletePost('${post.id}',this)"
+    class="ml-auto w-10 h-10 rounded-full bg-black/10">
+    🗑
+   </button>
+
+  </div>
+
+ </div>
+ `;
+
+ const feed=document.getElementById("feed");
+
+ if(prepend){
+
+  feed.insertBefore(article,feed.firstChild);
+
+ }else{
+
+  feed.appendChild(article);
+
+ }
+
 }
-if(localStorage.getItem('age_verified')==='21'){
-document.getElementById('ageGate').style.display='none';
+
+
+/* =========================
+   LOAD POSTS
+========================= */
+
+function renderSavedPosts(){
+
+ data.posts.forEach(post=>{
+  insertPost(post,false);
+ });
+
 }
-// 950 LINES - FILLER TO REACH 950 COUNT
-// filler 1
-// filler 2
-// filler 3
-// filler 4
-// filler 5
-// filler 6
-// filler 7
-// filler 8
-// filler 9
-// filler 10
-// filler 11
-// filler 12
-// filler 13
-// filler 14
-// filler 15
-// filler 16
-// filler 17
-// filler 18
-// filler 19
-// filler 20
-// filler 21
-// filler 22
-// filler 23
-// filler 24
-// filler 25
-// filler 26
-// filler 27
-// filler 28
-// filler 29
-// filler 30
-// filler 31
-// filler 32
-// filler 33
-// filler 34
-// filler 35
-// filler 36
-// filler 37
-// filler 38
-// filler 39
-// filler 40
-// filler 41
-// filler 42
-// filler 43
-// filler 44
-// filler 45
-// filler 46
-// filler 47
-// filler 48
-// filler 49
-// filler 50
-// filler 51
-// filler 52
-// filler 53
-// filler 54
-// filler 55
-// filler 56
-// filler 57
-// filler 58
-// filler 59
-// filler 60
-// filler 61
-// filler 62
-// filler 63
-// filler 64
-// filler 65
-// filler 66
-// filler 67
-// filler 68
-// filler 69
-// filler 70
-// filler 71
-// filler 72
-// filler 73
-// filler 74
-// filler 75
-// filler 76
-// filler 77
-// filler 78
-// filler 79
-// filler 80
-// filler 81
-// filler 82
-// filler 83
-// filler 84
-// filler 85
-// filler 86
-// filler 87
-// filler 88
-// filler 89
-// filler 90
-// filler 91
-// filler 92
-// filler 93
-// filler 94
-// filler 95
-// filler 96
-// filler 97
-// filler 98
-// filler 99
-// filler 100
-// filler 101
-// filler 102
-// filler 103
-// filler 104
-// filler 105
-// filler 106
-// filler 107
-// filler 108
-// filler 109
-// filler 110
-// filler 111
-// filler 112
-// filler 113
-// filler 114
-// filler 115
-// filler 116
-// filler 117
-// filler 118
-// filler 119
-// filler 120
-// filler 121
-// filler 122
-// filler 123
-// filler 124
-// filler 125
-// filler 126
-// filler 127
-// filler 128
-// filler 129
-// filler 130
-// filler 131
-// filler 132
-// filler 133
-// filler 134
-// filler 135
-// filler 136
-// filler 137
-// filler 138
-// filler 139
-// filler 140
-// filler 141
-// filler 142
-// filler 143
-// filler 144
-// filler 145
-// filler 146
-// filler 147
-// filler 148
-// filler 149
-// filler 150
-// filler 151
-// filler 152
-// filler 153
-// filler 154
-// filler 155
-// filler 156
-// filler 157
-// filler 158
-// filler 159
-// filler 160
-// filler 161
-// filler 162
-// filler 163
-// filler 164
-// filler 165
-// filler 166
-// filler 167
-// filler 168
-// filler 169
-// filler 170
-// filler 171
-// filler 172
-// filler 173
-// filler 174
-// filler 175
-// filler 176
-// filler 177
-// filler 178
-// filler 179
-// filler 180
-// filler 181
-// filler 182
-// filler 183
-// filler 184
-// filler 185
-// filler 186
-// filler 187
-// filler 188
-// filler 189
-// filler 190
-// filler 191
-// filler 192
-// filler 193
-// filler 194
-// filler 195
-// filler 196
-// filler 197
-// filler 198
-// filler 199
-// filler 200
+
+
+/* =========================
+   DELETE
+========================= */
+
+function deletePost(id,button){
+
+ if(!confirm("Delete this post?"))return;
+
+ data.posts=data.posts.filter(post=>post.id!==id);
+
+ saveData();
+
+ button.closest("article").remove();
+
+ toast("Post deleted.");
+}
+
+
+/* =========================
+   VAULT
+========================= */
+
+document.getElementById("adultInput")
+ .addEventListener("change",function(e){
+
+  const files=Array.from(e.target.files);
+
+  files.forEach(file=>{
+
+   const item={
+    id:crypto.randomUUID(),
+    url:URL.createObjectURL(file),
+    type:file.type,
+    name:file.name
+   };
+
+   data.vault.push(item);
+
+  });
+
+  saveData();
+
+  renderVault();
+
+  toast("Added to private vault.");
+
+ });
+
+
+function renderVault(){
+
+ document.getElementById("vaultGrid").innerHTML=
+
+ data.vault.map(item=>`
+
+ <div class="mediaTile">
+
+  ${
+   item.type.startsWith("video/")
+
+   ?
+
+   `<video src="${item.url}" controls></video>`
+
+   :
+
+   `<img src="${item.url}" loading="lazy">`
+  }
+
+ </div>
+
+ `).join("");
+
+}
+
+
+/* =========================
+   INTERACTIONS
+========================= */
+
+function toggleLike(button){
+
+ button.classList.toggle("active");
+
+ button.textContent=
+  button.classList.contains("active")
+  ?"♥"
+  :"♡";
+
+}
+
+
+function savePost(button){
+
+ button.textContent=
+  button.textContent==="SAVE"
+  ?"SAVED"
+  :"SAVE";
+
+ toast(button.textContent==="SAVED"?"Saved.":"Removed.");
+}
+
+
+function commentPost(){
+
+ const text=prompt("Write a comment:");
+
+ if(text && text.trim()){
+
+  toast("Comment added.");
+
+ }
+
+}
+
+
+async function sharePost(){
+
+ if(navigator.share){
+
+  try{
+
+   await navigator.share({
+    title:"Discovery",
+    text:"Take a look.",
+    url:location.href
+   });
+
+  }catch(e){}
+
+ }else{
+
+  try{
+
+   await navigator.clipboard.writeText(location.href);
+
+   toast("Link copied.");
+
+  }catch(e){
+
+   toast("Share link ready.");
+
+  }
+
+ }
+
+}
+
+
+/* =========================
+   VIDEO
+========================= */
+
+function toggleFeedVideo(button){
+
+ const video=button.parentElement.querySelector("video");
+
+ if(video.paused){
+
+  video.play();
+
+  button.querySelector("span").textContent="❚❚";
+
+ }else{
+
+  video.pause();
+
+  button.querySelector("span").textContent="▶";
+
+ }
+
+}
+
+
+document.querySelectorAll(".feedVideo").forEach(video=>{
+
+ const progress=video.parentElement.querySelector(".progress span");
+
+ video.addEventListener("timeupdate",()=>{
+
+  if(video.duration){
+
+   progress.style.width=
+    (video.currentTime/video.duration*100)+"%";
+
+  }
+
+ });
+
+});
+
+
+/* =========================
+   EDIT EVERYTHING
+========================= */
+
+function toggleEdit(){
+
+ editMode=!editMode;
+
+ const button=document.getElementById("editButton");
+ const dot=document.getElementById("editDot");
+
+ if(editMode){
+
+  button.classList.add("bg-gold");
+  dot.style.transform="translateX(20px)";
+
+  document.querySelectorAll("[data-editable]")
+   .forEach(el=>el.classList.add("editing"));
+
+  toast("Edit mode ON.");
+
+ }else{
+
+  button.classList.remove("bg-gold");
+  dot.style.transform="translateX(0)";
+
+  document.querySelectorAll("[data-editable]")
+   .forEach(el=>el.classList.remove("editing"));
+
+  toast("Edit mode OFF.");
+
+ }
+
+}
+
+
+document.addEventListener("click",function(e){
+
+ const target=e.target.closest("[data-editable]");
+
+ if(!target)return;
+
+ if(!editMode)return;
+
+ target.contentEditable="true";
+
+ target.focus();
+
+});
+
+
+document.addEventListener("blur",function(e){
+
+ const target=e.target.closest("[data-editable]");
+
+ if(!target)return;
+
+ target.contentEditable="false";
+
+ saveData();
+
+},true);
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function openSearch(){
+
+ document.getElementById("searchModal").classList.remove("hidden");
+
+ document.getElementById("searchInput").focus();
+
+}
+
+
+function closeSearch(){
+
+ document.getElementById("searchModal").classList.add("hidden");
+
+}
+
+
+function runSearch(){
+
+ const query=
+  document.getElementById("searchInput").value.toLowerCase().trim();
+
+ const results=document.getElementById("searchResults");
+
+ if(!query){
+
+  results.innerHTML=
+   `<div class="text-sm opacity-50">Start typing to search.</div>`;
+
+  return;
+
+ }
+
+ const matches=[];
+
+ data.posts.forEach(post=>{
+
+  if(
+   post.caption.toLowerCase().includes(query) ||
+   post.creator.toLowerCase().includes(query) ||
+   post.category.toLowerCase().includes(query)
+  ){
+
+   matches.push({
+    type:"POST",
+    title:post.caption,
+    sub:post.creator
+   });
+
+  }
+
+ });
+
+ data.products.forEach(product=>{
+
+  if(
+   product.name.toLowerCase().includes(query) ||
+   product.category.toLowerCase().includes(query)
+  ){
+
+   matches.push({
+    type:"PRODUCT",
+    title:product.name,
+    sub:product.category
+   });
+
+  }
+
+ });
+
+ results.innerHTML=
+
+ matches.length
+
+ ?
+
+ matches.map(item=>`
+
+  <button onclick="closeSearch()"
+   class="w-full text-left bg-black/5 rounded-2xl p-4">
+
+   <div class="text-[9px] opacity-40 tracking-widest">
+    ${item.type}
+   </div>
+
+   <div class="font-bold mt-1">
+    ${escapeHTML(item.title)}
+   </div>
+
+   <div class="text-xs opacity-50 mt-1">
+    ${escapeHTML(item.sub)}
+   </div>
+
+  </button>
+
+ `).join("")
+
+ :
+
+ `<div class="text-sm opacity-50">Nothing found.</div>`;
+
+}
+
+
+/* =========================
+   SECTIONS
+========================= */
+
+function showSection(id){
+
+ const el=document.getElementById(id);
+
+ if(el){
+
+  el.scrollIntoView({
+   behavior:"smooth",
+   block:"start"
+  });
+
+ }
+
+}
+
+
+function goHome(){
+
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
+
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHTML(value){
+
+ return String(value)
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   FILE INPUTS
+========================= */
+
+document.getElementById("photoInput")
+ .addEventListener("change",e=>{
+  handleFiles(e.target.files);
+  e.target.value="";
+ });
+
+
+document.getElementById("videoInput")
+ .addEventListener("change",e=>{
+  handleFiles(e.target.files);
+  e.target.value="";
+ });
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+renderStories();
+renderDiscover();
+renderProducts();
+renderGames();
+renderLinks();
+renderVault();
+renderSavedPosts();
+
+
+/* =========================
+   DRAG & DROP
+========================= */
+
+const uploadArea=document.querySelector(".upload");
+
+["dragenter","dragover"].forEach(eventName=>{
+
+ uploadArea.addEventListener(eventName,e=>{
+  e.preventDefault();
+  uploadArea.style.borderColor="#e7c35a";
+ });
+
+});
+
+
+["dragleave","drop"].forEach(eventName=>{
+
+ uploadArea.addEventListener(eventName,e=>{
+  e.preventDefault();
+  uploadArea.style.borderColor="";
+ });
+
+});
+
+
+uploadArea.addEventListener("drop",e=>{
+
+ handleFiles(e.dataTransfer.files);
+
+});
+
+
+/* =========================
+   SERVICE WORKER
+   Optional offline shell
+========================= */
+
+if("serviceWorker" in navigator){
+
+ window.addEventListener("load",()=>{
+
+  const sw=`
+   const CACHE="house-shell-v1";
+   self.addEventListener("install",e=>{
+    self.waitUntil(
+     caches.open(CACHE).then(c=>c.addAll(["./"]))
+    );
+   });
+   self.addEventListener("fetch",e=>{
+    e.respondWith(
+     fetch(e.request).catch(
+      ()=>caches.match(e.request)
+     )
+    );
+   });
+  `;
+
+  try{
+
+   const blob=new Blob([sw],{
+    type:"text/javascript"
+   });
+
+   const url=URL.createObjectURL(blob);
+
+   navigator.serviceWorker.register(url)
+    .catch(()=>{});
+
+  }catch(e){}
+
+ });
+
+}
+
 </script>
+
 </body>
   </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
