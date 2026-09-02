@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FISSHHFILET</title>
+<title>FISSHHFILET TRAILERS</title>
 <style>
 *{box-sizing:border-box;margin:0}body{background:#0a0a0a;color:#fff;font-family:serif;padding:20px}
 h1{text-align:center;letter-spacing:6px;margin:20px 0}
@@ -17,30 +17,31 @@ h1{text-align:center;letter-spacing:6px;margin:20px 0}
 .label{display:block;background:#222;border-radius:99px;padding:20px;text-align:center;margin:10px 0;letter-spacing:2px;font-weight:bold;cursor:pointer}
 .label.gold{background:#D4AF37;color:#000}
 .label input{position:absolute;left:-9999px;opacity:0.01}
-.preview{max-width:600px;margin:20px auto;color:#888;font-size:12px;font-family:sans-serif}
+.preview{max-width:600px;margin:20px auto;color:#888;font-size:12px;font-family:sans-serif;text-align:center}
+.badge{font-size:10px;background:#D4AF37;color:#000;padding:3px 8px;border-radius:99px;margin-left:8px;vertical-align:middle}
 </style>
 </head>
 <body>
-<h1>FISSHHFILET</h1>
-<div id="preview" class="preview"></div>
+<h1>FISSHHFILET <span class="badge">TRAILERS 0:04-5:00</span></h1>
+<div id="preview" class="preview">Upload trailers 4 sec to 5 min</div>
 <div id="feed" class="feed"></div>
 <button class="btn" id="open">+ UPLOAD</button>
 
 <div class="sheet" id="sheet">
 <div class="panel">
-<h2 style="letter-spacing:4px;margin-bottom:6px">Upload</h2>
-<p style="color:#666;font-family:sans-serif;font-size:12px;margin-bottom:18px">Android 15/16 fix — labels work natively. No async click.</p>
+<h2 style="letter-spacing:4px;margin-bottom:6px">Upload Trailer</h2>
+<p style="color:#666;font-family:sans-serif;font-size:12px;margin-bottom:18px">Android 16 fixed — 0:04 min 5:00 max</p>
 
 <label class="label gold" for="photoInput">+ UPLOAD PHOTO GALLERY
 <input id="photoInput" type="file" accept="image/*" multiple>
 </label>
 
-<label class="label" for="videoInput">▷ UPLOAD VIDEO 1-5 MIN GALLERY
-<input id="videoInput" type="file" accept="video/mp4,video/*">
+<label class="label" for="videoInput">▷ UPLOAD TRAILER 0:04-5:00
+<input id="videoInput" type="file" accept="video/mp4,video/quicktime,video/*">
 </label>
 
 <div class="label" style="background:transparent;border:1px solid #333" id="close">CANCEL</div>
-<p style="color:#444;font-size:11px;margin-top:14px;text-align:center;font-family:sans-serif">Multiple photos ok. Video 60-300s validated.</p>
+<p id="timing" style="color:#D4AF37;font-size:11px;margin-top:14px;text-align:center;font-family:sans-serif">TRAILER RULE: 4 seconds to 5:00</p>
 </div>
 </div>
 
@@ -52,20 +53,17 @@ document.getElementById('open').onclick=()=>sheet.classList.add('open');
 document.getElementById('close').onclick=()=>sheet.classList.remove('open');
 sheet.onclick=e=>{if(e.target===sheet)sheet.classList.remove('open')};
 
-function addCard(url,type,name){
+function addCard(url,type,name,dur){
  const d=document.createElement('div');d.className='card';
- if(type.startsWith('image')) d.innerHTML=`<img src="${url}"><p>${name}</p>`;
- else d.innerHTML=`<video src="${url}" controls playsinline></video><p>${name}</p>`;
+ if(type.startsWith('image')) d.innerHTML=`<img src="${url}"><p>${name} — POSTER</p>`;
+ else d.innerHTML=`<video src="${url}" controls playsinline></video><p>${name} — TRAILER ${dur}s</p>`;
  feed.prepend(d);
 }
 
 document.getElementById('photoInput').addEventListener('change',e=>{
  const files=[...e.target.files];
- preview.innerHTML=`Selected ${files.length} photos`;
- files.forEach(f=>{
-  const url=URL.createObjectURL(f);
-  addCard(url,f.type,f.name);
- });
+ preview.innerHTML=`Selected ${files.length} posters`;
+ files.forEach(f=>{ addCard(URL.createObjectURL(f),f.type,f.name,''); });
  sheet.classList.remove('open');
 });
 
@@ -74,10 +72,15 @@ document.getElementById('videoInput').addEventListener('change',e=>{
  const url=URL.createObjectURL(f);
  const v=document.createElement('video'); v.preload='metadata'; v.src=url;
  v.onloadedmetadata=()=>{
-  const sec=v.duration;
-  if(sec<60||sec>300){alert(`Video must be 1-5 min. Yours is ${Math.round(sec)}s`);return;}
-  preview.innerHTML=`Video ${f.name} ${Math.round(sec)}s OK`;
-  addCard(url,f.type,f.name);
+  const sec=Math.round(v.duration);
+  const fmt=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
+  if(sec<4||sec>300){
+    alert(`TRAILER must be 0:04 to 5:00 — yours is ${fmt} (${sec}s)`);
+    preview.innerHTML=`❌ ${f.name} is ${fmt} — needs 0:04 to 5:00`;
+    return;
+  }
+  preview.innerHTML=`✅ ${f.name} ${fmt} OK — trailer ready`;
+  addCard(url,f.type,f.name,fmt);
   sheet.classList.remove('open');
  };
 });
