@@ -1,102 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-512.png">
-<link rel="manifest" href="manifest.json">
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fi§hfilet™️ | Archive Vault</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FISSHHFILET</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;color:#f5f3f0;font-family:'Inter',sans-serif;font-weight:200;letter-spacing:0.04em;overflow-x:hidden}
-.header{position:fixed;top:0;width:100%;z-index:100;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(245,243,240,0.06);padding:24px 40px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:0.18em;font-weight:300}
-.logo span{font-weight:400}
-.nav{font-size:10px;letter-spacing:0.22em;opacity:0.6}
-.hero{height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:80px}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;letter-spacing:0.12em;margin-bottom:12px}
-.hero p{font-size:11px;letter-spacing:0.32em;opacity:0.5;text-transform:uppercase}
-.divider{width:1px;height:80px;background:linear-gradient(to bottom, rgba(245,243,240,0), rgba(245,243,240,0.15), rgba(245,243,240,0));margin:0 auto}
-.grid{max-width:1440px;margin:0 auto;padding:60px 40px 120px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(245,243,240,0.06)}
-.item{position:relative;background:#0a0a0a;aspect-ratio:4/5;overflow:hidden}
-.item img{width:100%;height:100%;object-fit:cover;opacity:0.85;transition:all 0.8s cubic-bezier(0.23,1,0.32,1)}
-.item:hover img{opacity:0.45;transform:scale(1.04)}
-.overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;opacity:0;transition:opacity 0.6s}
-.item:hover .overlay{opacity:1}
-.item-title{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:0.08em;margin-bottom:6px}
-.item-sub{font-size:10px;letter-spacing:0.18em;opacity:0.6;text-transform:uppercase}
-.soldout{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.32em;color:#C9A86A;border:1px solid rgba(201,168,106,0.4);padding:10px 22px;background:rgba(10,10,10,0.6);backdrop-filter:blur(12px)}
-.footer{border-top:1px solid rgba(245,243,240,0.06);padding:60px 40px;text-align:center}
-.footer p{font-size:10px;letter-spacing:0.22em;opacity:0.35;text-transform:uppercase;line-height:2.2}
-.gold{color:#C9A86A}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);padding:30px 16px}.header{padding:20px}.hero h1{font-size:42px}}
-@media(max-width:540px){.grid{grid-template-columns:1fr}}
+*{box-sizing:border-box;margin:0}body{background:#0a0a0a;color:#fff;font-family:serif;padding:20px}
+h1{text-align:center;letter-spacing:6px;margin:20px 0}
+.feed{display:grid;gap:16px;max-width:600px;margin:0 auto}
+.card{background:#151515;border-radius:12px;overflow:hidden;border:1px solid #222}
+.card img,.card video{width:100%;display:block}
+.card p{padding:10px;font-family:sans-serif;font-size:13px;color:#aaa}
+.btn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#D4AF37;color:#000;border:0;padding:18px 40px;border-radius:99px;font-weight:bold;letter-spacing:2px;z-index:50}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:end;z-index:100}
+.sheet.open{display:flex}.panel{background:#111;border-radius:24px 24px 0 0;width:100%;padding:24px}
+.label{display:block;background:#222;border-radius:99px;padding:20px;text-align:center;margin:10px 0;letter-spacing:2px;font-weight:bold;cursor:pointer}
+.label.gold{background:#D4AF37;color:#000}
+.label input{position:absolute;left:-9999px;opacity:0.01}
+.preview{max-width:600px;margin:20px auto;color:#888;font-size:12px;font-family:sans-serif}
 </style>
 </head>
 <body>
-<div class="header">
-<div class="logo">Fi§hfilet<span>™️</span> <span style="opacity:0.3;font-size:12px;margin-left:12px;letter-spacing:0.22em">ARCHIVE</span></div>
-<div class="nav">FI§HFILETTRADE™️ / EST. 2025</div>
-</div>
-<div class="hero">
-<h1>Fi§hfilet™️</h1>
-<p>Archive Vault — Private Collection / Sold Archive</p>
-</div>
-<div class="divider"></div>
-<div class="grid">
-<div class="item">
-<img src="https://images.unsplash.com/photo-1520637102912-2df6bb2aec6d?q=80&w=800" alt="Archive Piece">
-<div class="soldout">SOLD OUT</div>
-<div class="overlay">
-<div class="item-title">Sample Archive 001</div>
-<div class="item-sub">Fi§hfilet™️ — Archive Piece</div>
-</div>
-</div>
-<div class="item">
-<img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800" alt="Archive Piece">
-<div class="soldout">SOLD OUT</div>
-<div class="overlay">
-<div class="item-title">Sample Archive 002</div>
-<div class="item-sub">Fi§hfilet™️ — Archive Piece</div>
+<h1>FISSHHFILET</h1>
+<div id="preview" class="preview"></div>
+<div id="feed" class="feed"></div>
+<button class="btn" id="open">+ UPLOAD</button>
+
+<div class="sheet" id="sheet">
+<div class="panel">
+<h2 style="letter-spacing:4px;margin-bottom:6px">Upload</h2>
+<p style="color:#666;font-family:sans-serif;font-size:12px;margin-bottom:18px">Android 15/16 fix — labels work natively. No async click.</p>
+
+<label class="label gold" for="photoInput">+ UPLOAD PHOTO GALLERY
+<input id="photoInput" type="file" accept="image/*" multiple>
+</label>
+
+<label class="label" for="videoInput">▷ UPLOAD VIDEO 1-5 MIN GALLERY
+<input id="videoInput" type="file" accept="video/mp4,video/*">
+</label>
+
+<div class="label" style="background:transparent;border:1px solid #333" id="close">CANCEL</div>
+<p style="color:#444;font-size:11px;margin-top:14px;text-align:center;font-family:sans-serif">Multiple photos ok. Video 60-300s validated.</p>
 </div>
 </div>
-<div class="item">
-<img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=800" alt="Archive Piece">
-<div class="soldout">SOLD OUT</div>
-<div class="overlay">
-<div class="item-title">Sample Archive 003</div>
-<div class="item-sub">Fi§hfilet™️ — Archive Piece</div>
-</div>
-</div>
-<div class="item">
-<img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800" alt="Archive Piece">
-<div class="soldout">SOLD OUT</div>
-<div class="overlay">
-<div class="item-title">Sample Archive 004</div>
-<div class="item-sub">Fi§hfilet™️ — Archive Piece</div>
-</div>
-</div>
-<div class="item">
-<img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800" alt="Archive Piece">
-<div class="soldout">SOLD OUT</div>
-<div class="overlay">
-<div class="item-title">Sample Archive 005</div>
-<div class="item-sub">Fi§hfilet™️ — Archive Piece</div>
-</div>
-</div>
-<div class="item">
-<img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=800" alt="Archive Piece">
-<div class="soldout">SOLD OUT</div>
-<div class="overlay">
-<div class="item-title">Sample Archive 006</div>
-<div class="item-sub">Fi§hfilet™️ — Archive Piece</div>
-</div>
-</div>
-</div>
-<div class="footer">
-<p class="gold">Fi§hfilet™️ / Fi§hfiletTrade™️</p>
-<p>Quiet Luxury Archive<br>No longer available / Private vault<br><br>© 2025 Fi§hfilet™️ — All Rights Reserved<br>Contact via Instagram</p>
-</div>
+
+<script>
+const feed=document.getElementById('feed');
+const preview=document.getElementById('preview');
+const sheet=document.getElementById('sheet');
+document.getElementById('open').onclick=()=>sheet.classList.add('open');
+document.getElementById('close').onclick=()=>sheet.classList.remove('open');
+sheet.onclick=e=>{if(e.target===sheet)sheet.classList.remove('open')};
+
+function addCard(url,type,name){
+ const d=document.createElement('div');d.className='card';
+ if(type.startsWith('image')) d.innerHTML=`<img src="${url}"><p>${name}</p>`;
+ else d.innerHTML=`<video src="${url}" controls playsinline></video><p>${name}</p>`;
+ feed.prepend(d);
+}
+
+document.getElementById('photoInput').addEventListener('change',e=>{
+ const files=[...e.target.files];
+ preview.innerHTML=`Selected ${files.length} photos`;
+ files.forEach(f=>{
+  const url=URL.createObjectURL(f);
+  addCard(url,f.type,f.name);
+ });
+ sheet.classList.remove('open');
+});
+
+document.getElementById('videoInput').addEventListener('change',e=>{
+ const f=e.target.files[0]; if(!f) return;
+ const url=URL.createObjectURL(f);
+ const v=document.createElement('video'); v.preload='metadata'; v.src=url;
+ v.onloadedmetadata=()=>{
+  const sec=v.duration;
+  if(sec<60||sec>300){alert(`Video must be 1-5 min. Yours is ${Math.round(sec)}s`);return;}
+  preview.innerHTML=`Video ${f.name} ${Math.round(sec)}s OK`;
+  addCard(url,f.type,f.name);
+  sheet.classList.remove('open');
+ };
+});
+</script>
 </body>
 </html>
