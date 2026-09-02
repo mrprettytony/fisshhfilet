@@ -1,24 +1,125 @@
-<div class="nav"><div style="font-size:20px">◍</div>Discover</div>
-<div class="plus" id="open">+</div>
-<div class="nav"><div style="font-size:20px">((•))</div>LiveBitez</div>
-<div class="nav"><div style="font-size:20px">○</div>Profile</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>HOUSE v3</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{bebas:['Bebas Neue'],serif:['Instrument Serif'],grotesk:['Space Grotesk']},colors:{paper:'#F6F1E7',ink:'#080808',gold:'#E7C35A',blood:'#FF2D55'}}}}</script>
+<style>*{-webkit-tap-highlight-color:transparent}body{background:#080808;color:#F6F1E7;font-family:'Space Grotesk',sans-serif;overscroll-behavior:none}.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}.pill{background:#F6F1E7;color:#080808;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:12px 14px 12px 18px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;font-size:13px}.pill:active{transform:scale(.97)}.card-shadow{box-shadow:0 20px 60px rgba(0,0,0,.6)}.upload-label{display:flex;align-items:center;justify-content:center;gap:10px;border:1px dashed rgba(246,241,231,.25);border-radius:18px;padding:18px;background:rgba(246,241,231,.06);cursor:pointer;position:relative}.upload-label input{position:absolute;opacity:.01;width:1px;height:1px}.gold-glow{box-shadow:0 0 30px rgba(231,195,90,.45)}</style>
+</head>
+<body class="min-h-screen">
+<div id="ageGate" class="fixed inset-0 z-[100] bg-[#080808]/95 backdrop-blur-xl flex items-center justify-center p-6">
+<div class="max-w-[420px] w-full border border-white/10 rounded-[24px] p-7 bg-[#121212]">
+<div class="flex justify-between items-start mb-6"><span class="font-bebas text-[44px] leading-none">ADULTS ONLY<br>Enjoy Bar</span><span class="text-[10px] tracking-[.2em] opacity-60">HOUSE v3 • 21+</span></div>
+<p class="text-[14px] leading-[1.5] opacity-80 mb-6">Horror-comedy meets Demna Gucci. Netflix fun + Instagram beauty + Kalshi game picks. Nerds + Weird Science + Animal House as an app. Vault + Game Room 21+.</p>
+<div class="grid grid-cols-2 gap-3 mb-4"><button onclick="enterHouse()" class="bg-paper text-ink rounded-full h-[52px] font-bold uppercase text-[13px]">I AM 21+ ENTER</button><button onclick="location.href='https://google.com'" class="border border-white/20 rounded-full h-[52px] uppercase text-[13px]">Exit</button></div>
+<p class="text-[10px] opacity-40">Fantasy fashion theater only. No real gambling. 21+.</p>
 </div>
-<div class="sheet" id="sheet">
-<div class="panel">
-<h2 style="font-family:'Playfair Display',serif;letter-spacing:4px">Upload</h2>
-<label class="label gold" for="photoInput">+ UPLOAD PHOTO GALLERY<input id="photoInput" type="file" accept="image/*" multiple></label>
-<label class="label" for="videoInput">▷ UPLOAD VIDEO 00:00-05:00<input id="videoInput" type="file" accept="video/mp4,video/quicktime,video/*"></label>
-<div class="label" style="background:transparent" id="close">CANCEL</div>
+</div>
+
+<header class="sticky top-0 z-30 bg-[#080808]/90 backdrop-blur-xl border-b border-white/10">
+<div class="flex items-center justify-between px-4 md:px-6 h-[56px]">
+<div class="flex items-center gap-3"><span class="font-serif text-[22px] tracking-[.18em]">FISSHHFILET</span><span class="hidden md:inline text-[10px] tracking-[.3em] opacity-50">HOUSE v3 • LIVE 2.4K</span></div>
+<div class="flex gap-2"><button class="w-9 h-9 rounded-full border border-white/15 grid place-items-center">⌕</button></div>
+</div>
+</header>
+
+<div class="flex max-w-[1480px] mx-auto">
+<aside class="hidden lg:flex w-[240px] shrink-0 flex-col sticky top-[56px] h-[calc(100vh-56px)] p-4 gap-3 border-r border-white/10">
+<nav class="flex flex-col gap-1">
+<button class="text-left flex items-center gap-3 px-3 h-10 rounded-full bg-paper text-ink font-bold">⌂ HOME + X fi§ X</button>
+<button class="text-left flex items-center gap-3 px-3 h-10 rounded-full hover:bg-white/10">◍ DISCOVER</button>
+<button class="text-left flex items-center gap-3 px-3 h-10 rounded-full hover:bg-white/10">▶ THEATER 00:00-05:00</button>
+<button onclick="document.getElementById('createModal').classList.remove('hidden')" class="mt-2 bg-gold text-ink rounded-full h-11 font-bold uppercase text-[12px] gold-glow">+ CREATE</button>
+<button class="text-left flex items-center gap-3 px-3 h-10 rounded-full hover:bg-white/10 mt-2">◫ VAULT • <span id="vaultCount">2</span> • 21+</button>
+<button class="text-left flex items-center gap-3 px-3 h-10 rounded-full hover:bg-white/10 border border-white/10">⚡ GAME ROOM • 21+</button>
+</nav>
+<div class="mt-auto bg-[#121212] rounded-[18px] p-4 border border-white/10"><div class="flex justify-between items-center mb-2"><span class="text-[10px] tracking-[.2em]">EDIT MODE</span><button id="editToggle" class="w-10 h-6 rounded-full bg-white/20 relative"><span class="absolute top-1 left-1 w-4 h-4 bg-paper rounded-full"></span></button></div><p class="text-[11px] opacity-60">Tap any caption to edit. Your writing area.</p></div>
+</aside>
+
+<main class="flex-1 min-w-0 pb-[90px] lg:pb-0">
+<div class="px-4 md:px-6 py-3 flex gap-3 overflow-x-auto no-scrollbar border-b border-white/10">
+<div class="flex gap-3">
+<div class="flex flex-col items-center gap-1"><div class="w-12 h-12 rounded-full p-[2px] bg-gold"><img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100" class="w-full h-full rounded-full object-cover"/></div><span class="text-[9px]">@mina</span></div>
+<div class="flex flex-col items-center gap-1"><div class="w-12 h-12 rounded-full p-[2px] bg-gold"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100" class="w-full h-full rounded-full object-cover"/></div><span class="text-[9px]">@ghost</span></div>
+<div class="flex flex-col items-center gap-1"><div class="w-12 h-12 rounded-full p-[2px] bg-gold"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="w-full h-full rounded-full object-cover"/></div><span class="text-[9px]">@docks</span></div>
+</div>
+<div class="ml-auto hidden md:flex items-center gap-2 text-[10px] tracking-[.2em] opacity-60"><span class="w-2 h-2 bg-blood rounded-full animate-pulse"></span> X fi§ X IS LIVE HERO</div>
+</div>
+
+<div id="feed" class="px-3 md:px-6 py-4 grid grid-cols-1 gap-6 max-w-[680px] mx-auto">
+<article class="bg-[#111] rounded-[22px] overflow-hidden border border-white/10 card-shadow">
+<div class="relative"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1200&h=1500&fit=crop" class="w-full aspect-[4/5] object-cover"/><div class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-black/90 to-transparent"><h2 class="font-serif text-[34px] leading-[.95]">Beautiful things happen<br>when you go looking.</h2><p class="text-[10px] tracking-[.25em] opacity-70 mt-2">HOUSE EDITORIAL • X fi§ X • TONIGHT</p></div></div>
+<div class="p-4 flex justify-between"><div class="flex gap-2"><button class="w-9 h-9 rounded-full bg-white/10 grid place-items-center">♡</button><button class="w-9 h-9 rounded-full bg-white/10">◐</button><button class="w-9 h-9 rounded-full bg-white/10">↗</button></div><button class="text-[11px] border border-white/15 rounded-full px-4 h-9 uppercase">Save</button></div>
+<div class="px-4 pb-4"><p class="editable text-[14px] opacity-90">Tap to edit this caption — HOUSE v3 is a way of looking. We collect rooms, not just photos.</p></div>
+</article>
+
+<article class="bg-[#0E0E12] rounded-[22px] overflow-hidden border border-blood/30 card-shadow">
+<div class="p-3 flex justify-between items-center"><span class="font-bebas text-[18px] tracking-widest text-blood">ADULTS ONLY • Enjoy Bar</span><span class="text-[10px] bg-blood text-white px-2 py-1 rounded-full">21+ SOFTCORE</span></div>
+<div class="relative bg-black"><img src="https://images.unsplash.com/photo-1518834107812-67b0b288f498?w=1200&h=700&fit=crop" class="w-full aspect-[16/9] object-cover"/><div class="absolute inset-0 grid place-items-center"><div class="bg-blood text-white px-6 py-3 rounded-[12px] rotate-[-2deg] border-2 border-white"><p class="font-bebas text-[28px] leading-none">YOU'RE GONNA NEED<br>A BIGGER BOATI</p><p class="font-bold text-[22px]">$89</p></div></div></div>
+<div class="p-4 grid grid-cols-2 gap-3"><div class="bg-[#15151A] rounded-[16px] p-3 border border-white/10"><p class="text-[11px] opacity-60">BESTSELLER • TERROR #1</p><p class="font-bebas">JAWS T • $26</p></div><div class="bg-[#15151A] rounded-[16px] p-3 border border-white/10"><p class="text-[11px] opacity-60">RUNWAY LUXUS</p><p class="font-bebas">LUXUS MESH • $290</p></div></div>
+</article>
+
+<article class="bg-[#111] rounded-[22px] overflow-hidden border border-white/10 card-shadow">
+<div class="relative"><video id="heroVideo" class="w-full aspect-[9/16] md:aspect-[4/5] object-cover" muted loop playsinline poster="https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=800"><source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4"/></video><div class="absolute top-3 left-3 flex gap-2"><span class="bg-black/70 px-2 py-1 rounded-full text-[10px]">● LIVE</span><span class="bg-gold text-ink px-2 py-1 rounded-full text-[10px] font-bold">00:00-05:00</span></div><button onclick="toggleVideo()" class="absolute inset-0 grid place-items-center"><span class="w-14 h-14 rounded-full bg-white/20 backdrop-blur grid place-items-center">▶</span></button><div class="absolute bottom-0 inset-x-0 h-1 bg-white/20"><div id="progress" class="h-full bg-gold w-[35%]"></div></div></div>
+<div class="p-4"><p class="editable text-[14px]">Midnight at the docks — 5 min cut. Tap to edit.</p></div>
+</article>
+
+<div class="space-y-4">
+<div class="bg-[#121212] rounded-[22px] p-4 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">LUXURY • 11</p><div id="luxuryPills" class="flex flex-wrap gap-2"></div></div>
+<div class="bg-[#121212] rounded-[22px] p-4 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">FOOD • 4</p><div id="foodPills" class="flex flex-wrap gap-2"></div></div>
+<div class="bg-[#121212] rounded-[22px] p-4 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">CULTURE + PLATFORMS • 13</p><div id="culturePills" class="flex flex-wrap gap-2"></div></div>
+<div class="bg-[#121212] rounded-[22px] p-4 border border-white/10"><p class="text-[11px] tracking-[.3em] mb-3">GAME ROOM • KALSHI PICKS • 21+ EDITORIAL</p><div class="grid gap-2"><div class="bg-[#1A1A1A] rounded-[16px] p-4 border border-white/10 flex justify-between"><div><p class="font-bold">Will outdoor dining stay year-round?</p><p class="text-[11px] opacity-60">NYC • No real money</p></div><button class="bg-paper text-ink rounded-full px-4 h-8 text-[11px] font-bold">YES 62%</button></div><div class="bg-[#1A1A1A] rounded-[16px] p-4 border border-white/10 flex justify-between"><div><p class="font-bold">Next tide over 6ft in Soho?</p><p class="text-[11px] opacity-60">Ocean games</p></div><button class="bg-paper text-ink rounded-full px-4 h-8 text-[11px] font-bold">NO 54%</button></div></div><p class="text-[10px] opacity-40 mt-3">Entertainment only. No money transacted. Inspired by Kalshi news.</p></div>
 </div>
 </div>
+</main>
+</div>
+
+<nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#080808]/95 backdrop-blur-xl border-t border-white/10 flex justify-around items-center h-[72px] pb-2">
+<button class="flex flex-col items-center gap-1"><span>⌂</span><span class="text-[9px]">HOME • X fi§ X</span></button>
+<button class="flex flex-col items-center gap-1 opacity-60"><span>◍</span><span class="text-[9px]">DISCOVER</span></button>
+<button onclick="document.getElementById('createModal').classList.remove('hidden')" class="w-14 h-14 rounded-full bg-gold text-ink grid place-items-center text-[28px] -mt-6 gold-glow">+</button>
+<button class="flex flex-col items-center gap-1 opacity-60"><span>⚡</span><span class="text-[9px]">GAMES</span></button>
+<button class="flex flex-col items-center gap-1 opacity-60"><span>◫</span><span class="text-[9px]">VAULT</span></button>
+</nav>
+
+<div id="createModal" class="hidden fixed inset-0 z-[60] bg-[#080808]/90 backdrop-blur-xl p-4 md:p-10 overflow-y-auto">
+<div class="max-w-[720px] mx-auto bg-[#121212] rounded-[24px] border border-white/15 p-6">
+<div class="flex justify-between items-center mb-5"><h3 class="font-bebas text-[24px]">CREATE • PUBLISH</h3><button onclick="this.closest('#createModal').classList.add('hidden')" class="w-8 h-8 rounded-full border border-white/20 grid place-items-center">✕</button></div>
+<div id="dropZone" class="border border-dashed border-white/20 rounded-[18px] p-6 text-center bg-white/[.03]">
+<p class="font-bold">Choose photo or video</p><p class="text-[12px] opacity-60 mb-4">Drag here or tap • JPG PNG WEBP MP4 MOV • 00:00-05:00</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<label class="upload-label"><input id="photoInput" type="file" accept="image/*" multiple><span>UPLOAD PHOTO GALLERY</span></label>
+<label class="upload-label"><input id="videoInput" type="file" accept="video/*" multiple><span>UPLOAD VIDEO 1-5 MIN</span></label>
+</div>
+<p class="text-[10px] opacity-40 mt-3">If picker doesn't open, Chrome Settings Site settings Files Allow. Native label works on Android 15.</p>
+<div id="previewGrid" class="grid grid-cols-3 gap-2 mt-4"></div><div id="videoMeta" class="hidden mt-4 text-left bg-[#1A1A1A] rounded-[14px] p-3 text-[11px] border border-white/10"></div>
+</div>
+<textarea id="captionInput" class="w-full mt-4 bg-[#1A1A1A] border border-white/10 rounded-[16px] p-4 text-[14px] min-h-[90px] outline-none" placeholder="Tell the story... Use #hashtags, @mentions, location."></textarea>
+<div class="flex gap-2 mt-4"><button class="bg-paper text-ink rounded-full px-5 h-10 font-bold text-[12px] uppercase" onclick="publishPost()">Publish</button></div>
+<div class="mt-6 border-t border-white/10 pt-4"><p class="text-[11px] tracking-[.2em] mb-2">ADULT VAULT • 21+ SOFTCORE FASHION</p><label class="upload-label border-blood/40"><input id="adultInput" type="file" accept="image/*,video/*" multiple><span>UPLOAD TO PRIVATE VAULT • AGE-RESTRICTED</span></label></div>
+</div>
+</div>
+
 <script>
-const feed=document.getElementById('feed');const sheet=document.getElementById('sheet');
-document.getElementById('open').onclick=()=>sheet.classList.add('open');
-document.getElementById('close').onclick=()=>sheet.classList.remove('open');
-sheet.onclick=e=>{if(e.target===sheet)sheet.classList.remove('open')};
-function addCard(url,type){const d=document.createElement('div');d.className='card';if(type.startsWith('image'))d.innerHTML=`<img src="${url}"><div class="actions"><div class="act">♡</div><div class="act">◯</div><div class="act">↗</div><div style="margin-left:auto" class="act">⛶</div></div>`;else d.innerHTML=`<video src="${url}" controls playsinline></video><div class="actions"><div class="act">♡</div><div class="act">◯</div><div class="act">↗</div><div style="margin-left:auto" class="act">⛶</div></div>`;feed.prepend(d);}
-document.getElementById('photoInput').addEventListener('change',e=>{[...e.target.files].forEach(f=>addCard(URL.createObjectURL(f),f.type));sheet.classList.remove('open');});
-document.getElementById('videoInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);const v=document.createElement('video');v.preload='metadata';v.src=url;v.muted=true;v.onloadedmetadata=()=>{const sec=Math.round(v.duration);if(sec>300){alert(`Max 5:00 — yours ${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`);return;}addCard(url,f.type);sheet.classList.remove('open');};});
+const luxury=[["GUCCI","https://www.gucci.com"],["PRADA","https://www.prada.com"],["LOUIS VUITTON","https://www.louisvuitton.com"],["BOTTEGA VENETA","https://www.bottegaveneta.com"],["VALENTINO","https://www.valentino.com"],["HERMES","https://www.hermes.com"],["VAN CLEEF","https://www.vancleefarpels.com"],["YSL","https://www.ysl.com"],["TIFFANY","https://www.tiffany.com"],["SOTHEBYS","https://www.sothebys.com"],["FARFETCH","https://www.farfetch.com"]];
+const food=[["WHOLE FOODS","https://www.wholefoodsmarket.com"],["TRADER JOES","https://www.traderjoes.com"],["EREWHON","https://www.erewhon.com"],["VOODOO DOUGHNUTS","https://www.voodoodoughnut.com"]];
+const culture=[["APPLE MUSIC","https://music.apple.com"],["SPOTIFY","https://open.spotify.com"],["YOUTUBE","https://youtube.com"],["TARGET","https://target.com"],["TIKTOK","https://tiktok.com"],["INSTAGRAM","https://instagram.com"],["THREADS","https://threads.net"],["X","https://x.com"],["FACEBOOK","https://facebook.com"],["TRUTH SOCIAL","https://truthsocial.com"],["PINTEREST","https://pinterest.com"],["EDITORIALIST","https://editorialist.com"],["KALSHI","https://kalshi.com"]];
+function renderPills(id,list){const el=document.getElementById(id);el.innerHTML=list.map(([n,u])=>`<a href="${u}" target="_blank" class="pill">${n}<span class="w-7 h-7 rounded-full bg-ink text-paper grid place-items-center ml-3">↗</span></a>`).join('');}
+renderPills('luxuryPills',luxury);renderPills('foodPills',food);renderPills('culturePills',culture);
+function enterHouse(){document.getElementById('ageGate').style.display='none';localStorage.setItem('age_verified','21');}
+if(localStorage.getItem('age_verified')=='21'){document.getElementById('ageGate').style.display='none';}
+function toggleVideo(){const v=document.getElementById('heroVideo');if(v.paused)v.play();else v.pause();}
+setInterval(()=>{const v=document.getElementById('heroVideo');const p=document.getElementById('progress');if(v&&p&&v.duration){p.style.width=(v.currentTime/v.duration*100)+'%';}},200);
+const previewGrid=document.getElementById('previewGrid');let stagedFiles=[];
+function handleFiles(fileList){Array.from(fileList).forEach(file=>{const url=URL.createObjectURL(file);stagedFiles.push({file,url,type:file.type});const div=document.createElement('div');div.className='rounded-[12px] overflow-hidden aspect-square bg-black border border-white/10 relative';if(file.type.startsWith('image')){div.innerHTML=`<img src="${url}" class="w-full h-full object-cover"/>`;}else{div.innerHTML=`<video src="${url}" class="w-full h-full object-cover" muted></video><span class="absolute bottom-1 left-1 bg-black/70 text-[10px] px-1 rounded">${(file.size/1024/1024).toFixed(1)}MB</span>`;const video=document.createElement('video');video.src=url;video.onloadedmetadata=()=>{const meta=document.getElementById('videoMeta');meta.classList.remove('hidden');meta.innerHTML=`<b>${file.name}</b> • ${(file.size/1024/1024).toFixed(2)} MB • ${Math.floor(video.duration/60)}:${String(Math.floor(video.duration%60)).padStart(2,'0')} • ${video.videoWidth}x${video.videoHeight}`;};}previewGrid.appendChild(div);});}
+document.getElementById('photoInput').addEventListener('change',e=>handleFiles(e.target.files));
+document.getElementById('videoInput').addEventListener('change',e=>handleFiles(e.target.files));
+function publishPost(){const cap=document.getElementById('captionInput').value||'New drop — tap to edit.';if(stagedFiles.length==0){alert('Upload photo or video first');return;}const article=document.createElement('article');article.className='bg-[#111] rounded-[22px] overflow-hidden border border-white/10 card-shadow';const isVideo=stagedFiles[0].type.startsWith('video');article.innerHTML=`<div class="relative">${isVideo?`<video src="${stagedFiles[0].url}" class="w-full aspect-[4/5] object-cover" autoplay muted loop playsinline></video>`:`<img src="${stagedFiles[0].url}" class="w-full aspect-[4/5] object-cover"/>`}<div class="absolute top-3 left-3 bg-black/70 px-2 py-1 rounded-full text-[10px]">JUST NOW</div></div><div class="p-4"><p class="editable text-[14px]" contenteditable="true">${cap}</p></div>`;document.getElementById('feed').prepend(article);stagedFiles=[];previewGrid.innerHTML='';document.getElementById('captionInput').value='';document.getElementById('createModal').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+document.addEventListener('click',e=>{if(e.target.closest('.editable')){const el=e.target.closest('.editable');el.contentEditable='true';el.focus();}});
+const dz=document.getElementById('dropZone');dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('border-gold');});dz.addEventListener('dragleave',()=>dz.classList.remove('border-gold'));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('border-gold');handleFiles(e.dataTransfer.files);});
 </script>
 </body>
-</html>
+  </html>
