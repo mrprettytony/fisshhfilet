@@ -1,0 +1,1 @@
+const FISSHHFILET_VIEWER = { show(src){ const o=document.createElement('div'); o.className='viewer-overlay open'; o.innerHTML=`<span class=close onclick="this.parentElement.remove()">CLOSE</span><img src="${src}">`; document.body.appendChild(o); } };
