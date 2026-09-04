@@ -43,85 +43,541 @@ button,input,textarea{font:inherit}button{cursor:pointer}img,video{display:block
 <section class="max-w-[760px] mx-auto px-3 md:px-5 pb-8"><div class="display text-2xl mb-4">TONIGHT</div><div id="games" class="space-y-3"></div></section>
 <section class="max-w-[760px] mx-auto px-3 md:px-5 pb-10"><div class="display text-2xl mb-2">LINKS</div><div id="links"></div></section>
 <section class="max-w-[760px] mx-auto px-3 md:px-5 pb-16 hidden" id="vaultSection"><div class="display text-2xl mb-2">PRIVATE VAULT</div><div id="vaultGrid" class="grid grid-cols-2 gap-3 mt-5"></div></section>
-<div id="createModal" class="modal hidden"><div class="max-w-[760px] mx-auto bg-[#f6f1e7] text-black rounded-[28px] p-5 md:p-8"><div class="flex justify-between items-center mb-6"><h2 class="display text-3xl">CREATE</h2><button onclick="closeCreate()" class="w-10 h-10 rounded-full border border-black/15">✕</button></div><div class="upload"><div class="display text-2xl">ADD MEDIA</div><p class="text-xs opacity-55 mt-2 mb-5">Photos, galleries and videos</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="border border-black/10 rounded-2xl p-5 cursor-pointer relative"><input id="photoInput" type="file" accept="image/*" multiple><b class="text-xs">UPLOAD PHOTOS</b><div class="text-[10px] opacity-50 mt-1">Up to 100 photos per batch</div></label><label class="border border-black/10 rounded-2xl p-5 cursor-pointer relative"><input id="videoInput" type="file" accept="video/*" multiple><b class="text-xs">UPLOAD VIDEOS</b><div class="text-[10px] opacity-50 mt-1">Up to 20 videos per batch</div></label></div></div><div id="uploadStats" class="text-xs opacity-55 mt-4"></div><div id="uploadProgress" class="progressBar hidden"><div></div></div><div id="previewGrid" class="grid grid-cols-3 gap-3 mt-4"></div><textarea id="captionInput" class="field mt-5 min-h-[120px]" placeholder="Write your caption..."></textarea><input id="creatorInput" class="field mt-3" placeholder="Creator / username"><input id="categoryInput" class="field mt-3" placeholder="Category"><button id="publishBtn" onclick="publishPost()" class="w-full h-14 rounded-full bg-black text-white display mt-5">PUBLISH</button><div class="border-t border-black/10 mt-8 pt-6"><div class="text-[10px] tracking-[.25em] font-bold">PRIVATE VAULT • 21+</div><label class="upload block mt-3 cursor-pointer relative"><input id="adultInput" type="file" accept="image/*,video/*" multiple><b class="text-xs">ADD AGE-RESTRICTED MEDIA</b></label><div id="vaultGridModal" class="grid grid-cols-3 gap-3 mt-4"></div></div></div></div>
+<div id="createModal" class="modal hidden"><div class="max-w-[760px] mx-auto bg-[#f6f1e7] text-black rounded-[28px] p-5 md:p-8"><div class="flex justify-between items-center mb-6"><h2 class="display text-3xl">CREATE</h2><button onclick="closeCreate()" class="w-10 h-10 rounded-full border border-black/15">✕</button></div><div class="upload"><div class="display text-2xl">ADD MEDIA</div><p class="text-xs opacity-55 mt-2 mb-5">Photos, galleries and videos</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="border border-black/10 rounded-2xl p-5 cursor-pointer relative"><input id="photoInput" type="file" accept="image/*" multiple><b class="text-xs">UPLOAD PHOTOS</b><div class="text-[10px] opacity-50 mt-1">Up to 100 photos per batch</div></label><label class="border border-black/10 rounded-2xl p-5 cursor-pointer relative"><input id="videoInput" type="file" accept="video/*" multiple><b class="text-xs">UPLOAD VIDEOS</b><div class="text-[10px] opacity-50 mt-1">Up to 20 videos per batch</div></label></div></div><div id="uploadStats" class="text-xs opacity-55 mt-4"></div><div id="uploadProgress" class="progressBar hidden"><div></div></div><div id="previewGrid" class="grid grid-cols-3 gap-3 mt-4"></div><textarea id="captionInput" class="field mt-5 min-h-[120px]" placeholder="Write your caption..."></textarea><input id="creatorInput" class="field mt-3" placeholder="Creator / username"><input id="categoryInput" class="field mt-3" placeholder="Category"><button id="publishBtn" onclick="publishPost()" class="w-full h-14 rounded-full bg-black text-white display mt-5">PUBLISH</button><div class="border-t border-black/10 mt-8 pt-6"><div class="text-[10px] tracking-[.25em] font-bold">PRIVATE VAULT • 21+</div><label class="upload block mt-3 cursor-pointer relative"><input id="adultInput" type="file" accept="image/*,video/*" multiple><b class="text-xs">ADD AGE-RESTRICTED MEDIA</b></label><div id="vaultGridModal" class="grid grid-cols-3 gap-3 mt-4"></div><button type="button" onclick="clearArchive()" class="w-full h-12 rounded-full border border-black/15 text-xs tracking-[.2em] mt-5">CLEAR LOCAL ARCHIVE</button></div></div></div>
 <div id="searchModal" class="modal hidden"><div class="max-w-[700px] mx-auto bg-[#f6f1e7] text-black rounded-[28px] p-6"><div class="flex justify-between items-center mb-5"><h2 class="display text-3xl">SEARCH</h2><button onclick="closeSearch()" class="w-10 h-10 rounded-full border border-black/15">✕</button></div><input id="searchInput" class="field" placeholder="Search captions, creators, categories..." oninput="runSearch(this.value)"><div id="searchResults" class="mt-5 space-y-3"></div></div></div>
 <div id="lightbox" class="hidden" onclick="closeLightbox()"><button style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff">✕</button><img id="lightboxImg" class="hidden"><video id="lightboxVideo" class="hidden" controls playsinline></video></div>
 <div id="toast"></div>
 <script>
-const APP_KEY="fisshhfilet_house_data_v6";const MEDIA_DB_NAME="fisshhfilet_media_v1";const MEDIA_STORE="blobs";const PREVIEW_BATCH=18;
+const APP_KEY="fisshhfilet_house_data_v6";
+const MEDIA_DB_NAME="fisshhfilet_media_v1";
+const MEDIA_STORE="blobs";
+const PREVIEW_BATCH=6;
+const THUMB_MAX=320;
+const THUMB_QUALITY=0.7;
+const PHOTO_CAP=100;
+const VIDEO_CAP=20;
 const defaultData={posts:[],vault:[],products:[{name:"ARCHIVE TOTE",category:"OBJECT",image:"https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=800&q=80",link:"https://www.farfetch.com"},{name:"EDITORIAL SUNGLASSES",category:"STYLE",image:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&q=80",link:"https://www.farfetch.com"},{name:"STUDIO CHAIR",category:"HOME",image:"https://images.unsplash.com/photo-1503602642458-232111445657?w=800&q=80",link:"https://www.sothebys.com"},{name:"TRAVEL OBJECT",category:"TRAVEL",image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",link:"https://www.farfetch.com"}],games:[{question:"Will outdoor dining stay popular through winter?",options:["YES","NO"]},{question:"Will a new cultural hotspot appear downtown?",options:["YES","NO"]},{question:"Will short-form video dominate tonight?",options:["YES","NO"]}],links:[["GUCCI","https://www.gucci.com"],["PRADA","https://www.prada.com"],["LOUIS VUITTON","https://www.louisvuitton.com"],["HERMES","https://www.hermes.com"],["FARFETCH","https://www.farfetch.com"],["SOTHEBYS","https://www.sothebys.com"],["WHOLE FOODS","https://www.wholefoodsmarket.com"],["SPOTIFY","https://open.spotify.com"],["YOUTUBE","https://www.youtube.com"],["PINTEREST","https://www.pinterest.com"],["INSTAGRAM","https://www.instagram.com"],["TIKTOK","https://www.tiktok.com"],["X","https://x.com"]]};
-let data=null;let stagedFiles=[];let previewRenderedCount=0;const urlCache=new Map();
-const MediaDB={db:null,open(){return new Promise((resolve,reject)=>{if(this.db)return resolve(this.db);const req=indexedDB.open(MEDIA_DB_NAME,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(MEDIA_STORE))db.createObjectStore(MEDIA_STORE,{keyPath:"id"})};req.onsuccess=()=>{this.db=req.result;resolve(this.db)};req.onerror=()=>reject(req.error)})},async put(id,blob,meta={}){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readwrite");tx.objectStore(MEDIA_STORE).put({id,blob,type:meta.type||blob.type||"application/octet-stream",name:meta.name||"",created:Date.now()});tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})},async get(id){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readonly");const req=tx.objectStore(MEDIA_STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})},async delete(id){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readwrite");tx.objectStore(MEDIA_STORE).delete(id);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})},async deleteMany(ids){if(!ids||!ids.length)return;const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readwrite");const store=tx.objectStore(MEDIA_STORE);ids.forEach(id=>store.delete(id));tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}};
-async function resolveMediaUrl(mediaId){if(!mediaId)return"";if(urlCache.has(mediaId))return urlCache.get(mediaId);try{const row=await MediaDB.get(mediaId);if(!row||!row.blob)return"";const url=URL.createObjectURL(row.blob);urlCache.set(mediaId,url);return url}catch(e){return""}}
-function revokeMediaUrl(mediaId){if(urlCache.has(mediaId)){URL.revokeObjectURL(urlCache.get(mediaId));urlCache.delete(mediaId)}}
-async function writeBlobsBatched(items,onProgress){
- const queue=items.slice();let done=0;const total=items.length;
- const hasVideo=items.some(i=>i.type&&i.type.startsWith("video/"));
- const WRITE_CONCURRENCY=hasVideo?1:5;
- const workers=[];
- async function worker(){
-  while(queue.length){
-   const item=queue.shift();
-   if(onProgress) onProgress(done,total);
-   try{
-    if(item.file&&item.file.size>100*1024*1024){
-     toast("Video too big: "+Math.round(item.file.size/1024/1024)+"MB. Use 720p.");
-     stagedFiles=stagedFiles.filter(x=>x.id!==item.id);
-     done++; if(onProgress) onProgress(done,total);
-     continue;
-    }
-    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),20000));
-    await Promise.race([MediaDB.put(item.id,item.file||item.blob,{type:item.type,name:item.name}),timeout]);
-   }catch(e){
-    console.warn("IDB put failed",item.id,e);
-    if(e.message==="timeout"){toast("Video save timed out - try smaller"); stagedFiles=stagedFiles.filter(x=>x.id!==item.id);}
-   }
-   done++; if(onProgress) onProgress(done,total);
-   await new Promise(r=>setTimeout(r,0));
-  }
+let data=null;
+let stagedFiles=[];
+let previewRenderedCount=0;
+let ingestBusy=false;
+const thumbUrlCache=new Map();
+const originalUrlCache=new Map();
+function isAndroid(){return /Android/i.test(navigator.userAgent||"");}
+function yieldMain(){return new Promise(function(r){requestAnimationFrame(function(){setTimeout(r,0);});});}
+function isQuota(err){if(!err)return false;const n=err.name||"";return n==="QuotaExceededError"||n==="NS_ERROR_DOM_QUOTA_REACHED"||/quota/i.test(String(err.message||err));}
+const MediaDB={
+ db:null,
+ open(){
+  return new Promise((resolve,reject)=>{
+   if(this.db)return resolve(this.db);
+   const req=indexedDB.open(MEDIA_DB_NAME,1);
+   req.onupgradeneeded=()=>{
+    const db=req.result;
+    if(!db.objectStoreNames.contains(MEDIA_STORE))db.createObjectStore(MEDIA_STORE,{keyPath:"id"});
+   };
+   req.onsuccess=()=>{this.db=req.result;resolve(this.db);};
+   req.onerror=()=>reject(req.error);
+  });
+ },
+ async put(id,blob,meta={}){
+  const db=await this.open();
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction(MEDIA_STORE,"readwrite");
+   tx.objectStore(MEDIA_STORE).put({
+    id,
+    blob,
+    thumb:meta.thumb||null,
+    type:meta.type||blob.type||"application/octet-stream",
+    name:meta.name||"",
+    created:Date.now()
+   });
+   tx.oncomplete=()=>resolve();
+   tx.onabort=()=>reject(tx.error||new Error("idb-abort"));
+   tx.onerror=()=>reject(tx.error);
+  });
+ },
+ async get(id){
+  const db=await this.open();
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction(MEDIA_STORE,"readonly");
+   const req=tx.objectStore(MEDIA_STORE).get(id);
+   req.onsuccess=()=>resolve(req.result||null);
+   req.onerror=()=>reject(req.error);
+  });
+ },
+ async delete(id){
+  const db=await this.open();
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction(MEDIA_STORE,"readwrite");
+   tx.objectStore(MEDIA_STORE).delete(id);
+   tx.oncomplete=()=>resolve();
+   tx.onerror=()=>reject(tx.error);
+  });
+ },
+ async deleteMany(ids){
+  if(!ids||!ids.length)return;
+  const db=await this.open();
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction(MEDIA_STORE,"readwrite");
+   const store=tx.objectStore(MEDIA_STORE);
+   ids.forEach(id=>store.delete(id));
+   tx.oncomplete=()=>resolve();
+   tx.onerror=()=>reject(tx.error);
+  });
+ },
+ async clearAll(){
+  const db=await this.open();
+  return new Promise((resolve,reject)=>{
+   const tx=db.transaction(MEDIA_STORE,"readwrite");
+   tx.objectStore(MEDIA_STORE).clear();
+   tx.oncomplete=()=>resolve();
+   tx.onerror=()=>reject(tx.error);
+  });
  }
- const n=Math.min(WRITE_CONCURRENCY,Math.max(1,total));
- for(let i=0;i<n;i++) workers.push(worker());
- await Promise.all(workers);
+};
+async function requestPersist(){
+ if(!navigator.storage||!navigator.storage.persist)return false;
+ try{return await navigator.storage.persist();}catch(e){return false;}
 }
-function loadData(){try{const saved=localStorage.getItem(APP_KEY);if(saved){const parsed=JSON.parse(saved);return{...structuredClone(defaultData),...parsed}}}catch(e){}return structuredClone(defaultData)}
-function saveData(){try{const clean=structuredClone(data);(clean.posts||[]).forEach(p=>{(p.media||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url})});(clean.vault||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url});localStorage.setItem(APP_KEY,JSON.stringify(clean))}catch(e){toast("Storage limit reached.")}}
-function enterHouse(){localStorage.setItem("age_verified","21");document.getElementById("ageGate").classList.add("hidden");toast("Welcome to FISSHHFILET.")}function leaveHouse(){location.href="https://www.google.com"}if(localStorage.getItem("age_verified")==="21"){document.getElementById("ageGate").classList.add("hidden")}
-function toast(m){const el=document.getElementById("toast");el.textContent=m;el.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>{el.classList.remove("show")},2200)}
-function escapeHTML(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-const storyImages=["https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80","https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&q=80","https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80","https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80","https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80"];
-function renderStories(){document.getElementById("stories").innerHTML=storyImages.map((image,i)=>'<div class="story"><img src="'+image+'" loading="lazy"><div class="text-[10px] opacity-60">S'+(i+1)+'</div></div>').join("")}
-function renderDiscover(){const chips=["ALL","STYLE","HOME","TRAVEL","OBJECT","DISCOVERY"];document.getElementById("discover").innerHTML=chips.map(c=>'<button class="chip" onclick="toast(\''+c+'\')">'+c+'</button>').join("")}
-function renderProducts(){document.getElementById("products").innerHTML=data.products.map(p=>'<a class="product" href="'+p.link+'" target="_blank"><img src="'+p.image+'" loading="lazy"><div class="p-3"><div class="text-[10px] opacity-50">'+escapeHTML(p.category)+'</div><div class="text-xs mt-1">'+escapeHTML(p.name)+'</div></div></a>').join("")}
-function renderGames(){document.getElementById("games").innerHTML=data.games.map(g=>'<div class="gameCard"><div class="text-sm mb-3">'+escapeHTML(g.question)+'</div><div class="flex gap-2">'+g.options.map(o=>'<button class="chip" onclick="toast(\''+o+'\')">'+o+'</button>').join("")+'</div></div>').join("")}
-function renderLinks(){document.getElementById("links").innerHTML=data.links.map(pair=>'<a class="linkRow" href="'+pair[1]+'" target="_blank"><span class="text-xs tracking-wide">'+escapeHTML(pair[0])+'</span><span class="opacity-40 text-xs">↗</span></a>').join("")}
-function openCreate(){document.getElementById("createModal").classList.remove("hidden")}function closeCreate(){document.getElementById("createModal").classList.add("hidden")}
-function handleFiles(files){
+function revokeThumb(id){
+ if(thumbUrlCache.has(id)){URL.revokeObjectURL(thumbUrlCache.get(id));thumbUrlCache.delete(id);}
+}
+function revokeOriginal(id){
+ if(originalUrlCache.has(id)){URL.revokeObjectURL(originalUrlCache.get(id));originalUrlCache.delete(id);}
+}
+async function resolveThumbUrl(mediaId){
+ if(!mediaId)return"";
+ if(thumbUrlCache.has(mediaId))return thumbUrlCache.get(mediaId);
+ try{
+  const row=await MediaDB.get(mediaId);
+  if(!row)return"";
+  const src=row.thumb||row.blob;
+  if(!src)return"";
+  const url=URL.createObjectURL(src);
+  thumbUrlCache.set(mediaId,url);
+  return url;
+ }catch(e){return"";}
+}
+async function resolveMediaUrl(mediaId){
+ if(!mediaId)return"";
+ if(originalUrlCache.has(mediaId))return originalUrlCache.get(mediaId);
+ try{
+  const row=await MediaDB.get(mediaId);
+  if(!row||!row.blob)return"";
+  const url=URL.createObjectURL(row.blob);
+  originalUrlCache.set(mediaId,url);
+  return url;
+ }catch(e){return"";}
+}
+function canvasToJpeg(canvas){
+ return new Promise(function(resolve,reject){
+  if(!canvas.toBlob){
+   try{
+    const dataUrl=canvas.toDataURL("image/jpeg",THUMB_QUALITY);
+    const bstr=atob(dataUrl.split(",")[1]);
+    const u8=new Uint8Array(bstr.length);
+    for(let i=0;i<bstr.length;i++)u8[i]=bstr.charCodeAt(i);
+    resolve(new Blob([u8],{type:"image/jpeg"}));
+   }catch(err){reject(err);}
+   return;
+  }
+  canvas.toBlob(function(blob){blob?resolve(blob):reject(new Error("thumb"));},"image/jpeg",THUMB_QUALITY);
+ });
+}
+async function makeImageThumb(file){
+ let bmp=null;
+ try{
+  if(typeof createImageBitmap==="function"){
+   try{bmp=await createImageBitmap(file,{resizeWidth:THUMB_MAX,resizeHeight:THUMB_MAX,resizeQuality:"low"});}
+   catch(e){bmp=await createImageBitmap(file);}
+   const w=bmp.width,h=bmp.height;
+   const scale=Math.min(1,THUMB_MAX/Math.max(w,h));
+   const tw=Math.max(1,Math.round(w*scale));
+   const th=Math.max(1,Math.round(h*scale));
+   const canvas=document.createElement("canvas");
+   canvas.width=tw;canvas.height=th;
+   canvas.getContext("2d",{alpha:false}).drawImage(bmp,0,0,tw,th);
+   const blob=await canvasToJpeg(canvas);
+   bmp.close();canvas.width=0;canvas.height=0;
+   return blob;
+  }
+ }catch(e){if(bmp&&bmp.close)try{bmp.close();}catch(x){}}
+ const url=URL.createObjectURL(file);
+ try{
+  const img=await new Promise(function(res,rej){const el=new Image();el.onload=()=>res(el);el.onerror=()=>rej(new Error("decode"));el.src=url;});
+  const w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;
+  const scale=Math.min(1,THUMB_MAX/Math.max(w,h));
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(w*scale));
+  canvas.height=Math.max(1,Math.round(h*scale));
+  canvas.getContext("2d",{alpha:false}).drawImage(img,0,0,canvas.width,canvas.height);
+  img.src="";
+  const blob=await canvasToJpeg(canvas);
+  canvas.width=0;canvas.height=0;
+  return blob;
+ }finally{URL.revokeObjectURL(url);}
+}
+async function makeVideoThumb(file){
+ const url=URL.createObjectURL(file);
+ const video=document.createElement("video");
+ video.muted=true;video.playsInline=true;video.preload="metadata";
+ video.setAttribute("playsinline","");
+ try{
+  await new Promise(function(res,rej){
+   const t=setTimeout(()=>rej(new Error("video-meta")),8000);
+   video.onloadedmetadata=()=>{clearTimeout(t);res();};
+   video.onerror=()=>{clearTimeout(t);rej(new Error("video-load"));};
+   video.src=url;
+  });
+  try{
+   video.currentTime=Math.min(0.35,isFinite(video.duration)?video.duration*0.1:0.1);
+   await new Promise(function(res){
+    const t=setTimeout(res,2500);
+    video.onseeked=()=>{clearTimeout(t);res();};
+   });
+  }catch(e){}
+  const w=video.videoWidth||0,h=video.videoHeight||0;
+  if(!w||!h)return null;
+  const scale=Math.min(1,THUMB_MAX/Math.max(w,h));
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(w*scale));
+  canvas.height=Math.max(1,Math.round(h*scale));
+  canvas.getContext("2d",{alpha:false}).drawImage(video,0,0,canvas.width,canvas.height);
+  const blob=await canvasToJpeg(canvas);
+  canvas.width=0;canvas.height=0;
+  video.pause();video.removeAttribute("src");video.load();
+  return blob;
+ }catch(e){return null;}
+ finally{URL.revokeObjectURL(url);}
+}
+async function makeThumb(item){
+ if(item._thumbBlob)return item._thumbBlob;
+ try{
+  item._thumbBlob=item.type.startsWith("video/")?await makeVideoThumb(item.file):await makeImageThumb(item.file);
+ }catch(e){item._thumbBlob=null;}
+ await yieldMain();
+ return item._thumbBlob;
+}
+async function writeBlobsSequential(items,onProgress){
+ const saved=[];
+ const failed=[];
+ for(let i=0;i<items.length;i++){
+  const item=items[i];
+  if(onProgress)onProgress(i,items.length,item.name||"");
+  if(item.file&&item.file.size>100*1024*1024){
+   failed.push({name:item.name,reason:"File over 100MB"});
+   continue;
+  }
+  try{
+   const thumb=await makeThumb(item);
+   await MediaDB.put(item.id,item.file||item.blob,{type:item.type,name:item.name,thumb:thumb||null});
+   saved.push(item);
+  }catch(e){
+   const reason=isQuota(e)?"Storage quota exceeded":(e&&e.message)||"Save failed";
+   failed.push({name:item.name,reason:reason});
+   if(isQuota(e)){
+    for(let r=i+1;r<items.length;r++)failed.push({name:items[r].name,reason:"Stopped — storage quota"});
+    break;
+   }
+  }
+  await yieldMain();
+ }
+ if(onProgress)onProgress(items.length,items.length,"");
+ return {saved,failed};
+}
+function loadData(){
+ try{
+  const saved=localStorage.getItem(APP_KEY);
+  if(saved){const parsed=JSON.parse(saved);return{...structuredClone(defaultData),...parsed};}
+ }catch(e){}
+ return structuredClone(defaultData);
+}
+function saveData(){
+ try{
+  const clean=structuredClone(data);
+  (clean.posts||[]).forEach(p=>{(p.media||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url;});});
+  (clean.vault||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url;});
+  localStorage.setItem(APP_KEY,JSON.stringify(clean));
+  return true;
+ }catch(e){toast("Catalog storage limit reached.");return false;}
+}
+function enterHouse(){
+ localStorage.setItem("age_verified","21");
+ document.getElementById("ageGate").classList.add("hidden");
+ requestPersist();
+ toast("Welcome to FISSHHFILET.");
+}
+function leaveHouse(){location.href="https://www.google.com";}
+if(localStorage.getItem("age_verified")==="21"){document.getElementById("ageGate").classList.add("hidden");}
+function toast(m){const el=document.getElementById("toast");el.textContent=m;el.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>{el.classList.remove("show");},2200);}
+function escapeHTML(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function renderStories(){
+ const first=data.posts[0];
+ const label=first?escapeHTML(first.creator):"HOUSE";
+ document.getElementById("stories").innerHTML='<div class="story"><div style="width:64px;height:64px;border-radius:50%;border:2px solid #e7c35a;margin:0 auto 6px;background:#111;display:flex;align-items:center;justify-content:center;font-size:11px">FF</div><div class="text-[10px] opacity-70">'+label+'</div></div>';
+}
+function renderDiscover(){
+ const chips=["ALL","PHOTO","VIDEO","DISCOVERY"];
+ document.getElementById("discover").innerHTML=chips.map(c=>'<button class="chip" onclick="filterDiscover(\''+c+'\')">'+c+'</button>').join("");
+}
+function filterDiscover(c){
+ const feed=document.getElementById("feed");
+ const cards=feed.querySelectorAll("article");
+ cards.forEach(card=>{
+  const kinds=(card.dataset.kinds||"").split(",");
+  if(c==="ALL"||c==="DISCOVERY"){card.style.display="";return;}
+  if(c==="PHOTO")card.style.display=kinds.includes("image")?"":"none";
+  if(c==="VIDEO")card.style.display=kinds.includes("video")?"":"none";
+ });
+ toast(c);
+}
+function renderProducts(){document.getElementById("products").innerHTML=data.products.map(p=>'<a class="product" href="'+p.link+'" target="_blank"><img src="'+p.image+'" loading="lazy"><div class="p-3"><div class="text-[10px] opacity-50">'+escapeHTML(p.category)+'</div><div class="text-xs mt-1">'+escapeHTML(p.name)+'</div></div></a>').join("");}
+function renderGames(){document.getElementById("games").innerHTML=data.games.map(g=>'<div class="gameCard"><div class="text-sm mb-3">'+escapeHTML(g.question)+'</div><div class="flex gap-2">'+g.options.map(o=>'<button class="chip" onclick="toast(\''+o+'\')">'+o+'</button>').join("")+'</div></div>').join("");}
+function renderLinks(){document.getElementById("links").innerHTML=data.links.map(pair=>'<a class="linkRow" href="'+pair[1]+'" target="_blank"><span class="text-xs tracking-wide">'+escapeHTML(pair[0])+'</span><span class="opacity-40 text-xs">↗</span></a>').join("");}
+function openCreate(){document.getElementById("createModal").classList.remove("hidden");requestPersist();}
+function closeCreate(){document.getElementById("createModal").classList.add("hidden");}
+async function handleFiles(files){
  const incoming=Array.from(files||[]);
  let photos=stagedFiles.filter(f=>f.type.startsWith("image/")).length;
  let videos=stagedFiles.filter(f=>f.type.startsWith("video/")).length;
+ const rejected=[];
  for(const file of incoming){
-  if(file.size>100*1024*1024){toast(file.name+" is "+Math.round(file.size/1024/1024)+"MB - too big. Use 720p.");continue}
-  if(file.type.startsWith("image/")&&photos>=100){toast("Photo batch limit reached.");break}
-  if(file.type.startsWith("video/")&&videos>=20){toast("Video batch limit reached.");break}
-  const id=crypto.randomUUID();stagedFiles.push({id,file,type:file.type,name:file.name});
-  if(file.type.startsWith("image/"))photos++;else if(file.type.startsWith("video/"))videos++;
+  if(file.size>100*1024*1024){rejected.push(file.name+" over 100MB");continue;}
+  if(file.type.startsWith("image/")&&photos>=PHOTO_CAP){rejected.push("Photo batch cap "+PHOTO_CAP);break;}
+  if(file.type.startsWith("video/")&&videos>=VIDEO_CAP){rejected.push("Video batch cap "+VIDEO_CAP);break;}
+  if(!file.type.startsWith("image/")&&!file.type.startsWith("video/")){rejected.push(file.name+" unsupported");continue;}
+  stagedFiles.push({id:crypto.randomUUID(),file,type:file.type,name:file.name,_thumbBlob:null});
+  if(file.type.startsWith("image/"))photos++;else videos++;
  }
- previewRenderedCount=0;renderPreviewProgressive(true);
+ if(rejected.length)toast(rejected[0]);
+ previewRenderedCount=0;
+ await renderPreviewProgressive(true);
 }
-function renderPreviewProgressive(reset){const grid=document.getElementById("previewGrid");if(reset){grid.innerHTML="";previewRenderedCount=0}const start=previewRenderedCount;const end=Math.min(stagedFiles.length,start+PREVIEW_BATCH);const slice=stagedFiles.slice(start,end);slice.forEach(item=>{const tile=document.createElement("div");tile.className="mediaTile";tile.dataset.id=item.id;const url=URL.createObjectURL(item.file);item._tempUrl=url;if(item.type.startsWith("image/")){tile.innerHTML='<img src="'+url+'" loading="lazy"><button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>'}else{tile.innerHTML='<video src="'+url+'" muted playsinline preload="metadata"></video><button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>'}grid.appendChild(tile)});previewRenderedCount=end;const photos=stagedFiles.filter(x=>x.type.startsWith("image/")).length;const videos=stagedFiles.filter(x=>x.type.startsWith("video/")).length;document.getElementById("uploadStats").textContent=photos+" photos • "+videos+" videos selected"+(previewRenderedCount<stagedFiles.length?" • showing "+previewRenderedCount+"/"+stagedFiles.length:"");if(previewRenderedCount<stagedFiles.length){requestAnimationFrame(()=>renderPreviewProgressive(false))}}
-function removeStaged(id){const idx=stagedFiles.findIndex(x=>x.id===id);if(idx===-1)return;const item=stagedFiles[idx];if(item._tempUrl){URL.revokeObjectURL(item._tempUrl);item._tempUrl=null}stagedFiles.splice(idx,1);previewRenderedCount=0;renderPreviewProgressive(true)}
-async function publishPost(){if(!stagedFiles.length){toast("Add at least one photo or video.");return}const caption=document.getElementById("captionInput").value.trim()||"New discovery.";const creator=document.getElementById("creatorInput").value.trim()||"CREATOR";const category=document.getElementById("categoryInput").value.trim()||"DISCOVERY";const btn=document.getElementById("publishBtn");const progressEl=document.getElementById("uploadProgress");const bar=progressEl.querySelector("div");btn.disabled=true;btn.textContent="SAVING…";progressEl.classList.remove("hidden");bar.style.width="0%";const mediaMeta=stagedFiles.map(x=>({id:x.id,type:x.type,name:x.name}));try{await writeBlobsBatched(stagedFiles,(done,total)=>{bar.style.width=Math.round((done/total)*100)+"%"});const post={id:crypto.randomUUID(),caption,creator,category,created:Date.now(),media:mediaMeta};data.posts.unshift(post);saveData();await insertPost(post,true);stagedFiles.forEach(x=>{if(x._tempUrl)URL.revokeObjectURL(x._tempUrl)});stagedFiles=[];previewRenderedCount=0;document.getElementById("previewGrid").innerHTML="";document.getElementById("uploadStats").textContent="";document.getElementById("captionInput").value="";document.getElementById("creatorInput").value="";document.getElementById("categoryInput").value="";closeCreate();toast("Published to FISSHHFILET.");window.scrollTo({top:0,behavior:"smooth"})}catch(e){console.error(e);toast("Publish failed.")}finally{btn.disabled=false;btn.textContent="PUBLISH";progressEl.classList.add("hidden");bar.style.width="0%"}}
-async function insertPost(post,prepend=false){const article=document.createElement("article");article.className="card";article.dataset.postId=post.id;const first=post.media&&post.media[0];let mediaHtml='<div class="w-full aspect-[4/5] bg-black"></div>';if(first){const url=await resolveMediaUrl(first.id);if(first.type&&first.type.startsWith("video/")){mediaHtml='<video src="'+url+'" class="w-full aspect-[4/5] object-cover" controls playsinline loop muted preload="metadata" onclick="openLightbox(\''+first.id+'\')"></video>'}else{mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+first.id+'\')">'}}article.innerHTML='<div class="relative bg-black">'+mediaHtml+'<div class="absolute top-4 left-4"><span class="bg-black/75 text-white rounded-full px-3 py-2 text-[9px]">'+escapeHTML(post.category)+'</span></div></div><div class="p-5"><div class="flex justify-between items-center mb-3"><b class="text-xs">'+escapeHTML(post.creator)+'</b><span class="text-[9px] opacity-40">JUST NOW</span></div><p class="text-[15px] leading-6">'+escapeHTML(post.caption)+'</p><div class="flex gap-2 mt-5"><button onclick="toggleLike(this)" class="like w-10 h-10 rounded-full bg-black/10">♡</button><button onclick="sharePost()" class="w-10 h-10 rounded-full bg-black/10">↗</button><button onclick="deletePost(\''+post.id+'\',this)" class="ml-auto w-10 h-10 rounded-full bg-black/10">🗑</button></div></div>';const feed=document.getElementById("feed");if(prepend)feed.insertBefore(article,feed.firstChild);else feed.appendChild(article)}
-async function renderSavedPosts(){for(const post of data.posts){await insertPost(post,false)}}
-async function deletePost(id,button){if(!confirm("Delete this post?"))return;const post=data.posts.find(p=>p.id===id);data.posts=data.posts.filter(p=>p.id!==id);saveData();if(post&&post.media){const ids=post.media.map(m=>m.id).filter(Boolean);ids.forEach(revokeMediaUrl);try{await MediaDB.deleteMany(ids)}catch(e){}}if(button)button.closest("article").remove();toast("Post deleted.")}
-async function openLightbox(mediaId){const url=await resolveMediaUrl(mediaId);if(!url){toast("Media not found.");return}const lb=document.getElementById("lightbox");const img=document.getElementById("lightboxImg");const vid=document.getElementById("lightboxVideo");const row=await MediaDB.get(mediaId);const isVideo=row&&row.type&&row.type.startsWith("video/");img.classList.add("hidden");vid.classList.add("hidden");if(isVideo){vid.src=url;vid.classList.remove("hidden");vid.play().catch(()=>{});}else{img.src=url;img.classList.remove("hidden");}lb.classList.remove("hidden");document.body.style.overflow="hidden";}
-function closeLightbox(){const lb=document.getElementById("lightbox");const img=document.getElementById("lightboxImg");const vid=document.getElementById("lightboxVideo");lb.classList.add("hidden");img.src="";vid.pause();vid.src="";document.body.style.overflow="";}
-document.getElementById("adultInput").addEventListener("change",async function(e){const files=Array.from(e.target.files||[]);e.target.value="";if(!files.length)return;toast("Saving to vault…");const items=files.map(file=>({id:crypto.randomUUID(),file,type:file.type,name:file.name}));try{await writeBlobsBatched(items);items.forEach(item=>{data.vault.push({id:item.id,type:item.type,name:item.name})});saveData();renderVault();toast("Added to private vault.")}catch(err){toast("Vault save failed.")}});
-async function renderVault(){const grid=document.getElementById("vaultGrid");if(!grid)return;grid.innerHTML="";const batch=24;let i=0;async function next(){const slice=data.vault.slice(i,i+batch);for(const item of slice){const url=await resolveMediaUrl(item.id);const tile=document.createElement("div");tile.className="mediaTile";if(item.type&&item.type.startsWith("video/")){tile.innerHTML='<video src="'+url+'" controls preload="metadata" onclick="openLightbox(\''+item.id+'\')"></video>'}else{tile.innerHTML='<img src="'+url+'" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+item.id+'\')">'}grid.appendChild(tile)}i+=batch;if(i<data.vault.length)requestAnimationFrame(next)}next()}
-document.getElementById("photoInput").addEventListener("change",e=>{handleFiles(e.target.files);e.target.value=""});document.getElementById("videoInput").addEventListener("change",e=>{handleFiles(e.target.files);e.target.value=""});
-const uploadArea=document.querySelector(".upload");["dragenter","dragover"].forEach(n=>{uploadArea.addEventListener(n,e=>{e.preventDefault();uploadArea.style.borderColor="#e7c35a"})});["dragleave","drop"].forEach(n=>{uploadArea.addEventListener(n,e=>{e.preventDefault();uploadArea.style.borderColor=""})});uploadArea.addEventListener("drop",e=>{handleFiles(e.dataTransfer.files)});
-(async function init(){data=loadData();(data.posts||[]).forEach(p=>{(p.media||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url})});(data.vault||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url});try{await MediaDB.open()}catch(e){toast("Local media storage unavailable.")}renderStories();renderDiscover();renderProducts();renderGames();renderLinks();await renderVault();await renderSavedPosts()})();
+async function renderPreviewProgressive(reset){
+ const grid=document.getElementById("previewGrid");
+ if(reset){grid.innerHTML="";previewRenderedCount=0;}
+ const start=previewRenderedCount;
+ const end=Math.min(stagedFiles.length,start+PREVIEW_BATCH);
+ for(let i=start;i<end;i++){
+  const item=stagedFiles[i];
+  const tile=document.createElement("div");
+  tile.className="mediaTile";
+  tile.dataset.id=item.id;
+  tile.innerHTML='<div style="width:100%;height:100%;background:#ddd"></div><button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>';
+  grid.appendChild(tile);
+  try{
+   const thumb=await makeThumb(item);
+   if(thumb){
+    if(item._tempUrl)URL.revokeObjectURL(item._tempUrl);
+    const url=URL.createObjectURL(thumb);
+    item._tempUrl=url;
+    const img=document.createElement("img");
+    img.src=url;img.loading="lazy";
+    tile.insertBefore(img,tile.firstChild);
+    tile.querySelector("div").remove();
+   }
+  }catch(e){}
+  await yieldMain();
+ }
+ previewRenderedCount=end;
+ const photos=stagedFiles.filter(x=>x.type.startsWith("image/")).length;
+ const videos=stagedFiles.filter(x=>x.type.startsWith("video/")).length;
+ document.getElementById("uploadStats").textContent=photos+" photos • "+videos+" videos selected"+(previewRenderedCount<stagedFiles.length?" • thumbs "+previewRenderedCount+"/"+stagedFiles.length:"")+(isAndroid()?" • Android sequential":"");
+ if(previewRenderedCount<stagedFiles.length)requestAnimationFrame(()=>renderPreviewProgressive(false));
+}
+function removeStaged(id){
+ const idx=stagedFiles.findIndex(x=>x.id===id);
+ if(idx===-1)return;
+ const item=stagedFiles[idx];
+ if(item._tempUrl){URL.revokeObjectURL(item._tempUrl);item._tempUrl=null;}
+ stagedFiles.splice(idx,1);
+ previewRenderedCount=0;
+ renderPreviewProgressive(true);
+}
+async function publishPost(){
+ if(ingestBusy)return;
+ if(!stagedFiles.length){toast("Add at least one photo or video.");return;}
+ const caption=document.getElementById("captionInput").value.trim()||"New discovery.";
+ const creator=document.getElementById("creatorInput").value.trim()||"CREATOR";
+ const category=document.getElementById("categoryInput").value.trim()||"DISCOVERY";
+ const btn=document.getElementById("publishBtn");
+ const progressEl=document.getElementById("uploadProgress");
+ const bar=progressEl.querySelector("div");
+ ingestBusy=true;
+ btn.disabled=true;btn.textContent="SAVING…";
+ progressEl.classList.remove("hidden");bar.style.width="0%";
+ await requestPersist();
+ try{
+  const result=await writeBlobsSequential(stagedFiles,function(done,total,name){
+   bar.style.width=Math.round((done/Math.max(total,1))*100)+"%";
+   if(name)btn.textContent="SAVING "+done+"/"+total;
+  });
+  if(!result.saved.length){
+   toast(result.failed[0]?result.failed[0].reason:"Nothing saved.");
+   return;
+  }
+  const mediaMeta=result.saved.map(x=>({id:x.id,type:x.type,name:x.name}));
+  const post={id:crypto.randomUUID(),caption,creator,category,created:Date.now(),media:mediaMeta};
+  data.posts.unshift(post);
+  if(!saveData()){
+   toast("Saved files, but catalog write failed. Reloading may hide the post card.");
+  }
+  await insertPost(post,true);
+  stagedFiles.forEach(x=>{if(x._tempUrl)URL.revokeObjectURL(x._tempUrl);});
+  stagedFiles=[];previewRenderedCount=0;
+  document.getElementById("previewGrid").innerHTML="";
+  document.getElementById("uploadStats").textContent=result.failed.length?result.failed.length+" file(s) not saved":"";
+  document.getElementById("captionInput").value="";
+  document.getElementById("creatorInput").value="";
+  document.getElementById("categoryInput").value="";
+  closeCreate();
+  toast(result.failed.length?"Published with "+result.failed.length+" skipped.":"Published to FISSHHFILET.");
+  window.scrollTo({top:0,behavior:"smooth"});
+ }catch(e){
+  console.error(e);
+  toast("Publish failed.");
+ }finally{
+  ingestBusy=false;
+  btn.disabled=false;btn.textContent="PUBLISH";
+  progressEl.classList.add("hidden");bar.style.width="0%";
+ }
+}
+async function insertPost(post,prepend=false){
+ const article=document.createElement("article");
+ article.className="card";
+ article.dataset.postId=post.id;
+ const kinds=(post.media||[]).map(m=>(m.type||"").startsWith("video/")?"video":"image");
+ article.dataset.kinds=Array.from(new Set(kinds)).join(",");
+ const first=post.media&&post.media[0];
+ let mediaHtml='<div class="w-full aspect-[4/5] bg-black"></div>';
+ if(first){
+  const url=await resolveThumbUrl(first.id);
+  if(first.type&&first.type.startsWith("video/")){
+   mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+first.id+'\')"><div class="absolute bottom-4 left-4 text-[10px] tracking-widest">VIDEO</div>';
+  }else{
+   mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+first.id+'\')">';
+  }
+ }
+ article.innerHTML='<div class="relative bg-black">'+mediaHtml+'<div class="absolute top-4 left-4"><span class="bg-black/75 text-white rounded-full px-3 py-2 text-[9px]">'+escapeHTML(post.category)+'</span></div></div><div class="p-5"><div class="flex justify-between items-center mb-3"><b class="text-xs">'+escapeHTML(post.creator)+'</b><span class="text-[9px] opacity-40">JUST NOW</span></div><p class="text-[15px] leading-6">'+escapeHTML(post.caption)+'</p><div class="flex gap-2 mt-5"><button onclick="toggleLike(this)" class="like w-10 h-10 rounded-full bg-black/10">♡</button><button onclick="sharePost()" class="w-10 h-10 rounded-full bg-black/10">↗</button><button onclick="deletePost(\''+post.id+'\',this)" class="ml-auto w-10 h-10 rounded-full bg-black/10">🗑</button></div></div>';
+ const feed=document.getElementById("feed");
+ if(prepend)feed.insertBefore(article,feed.firstChild);else feed.appendChild(article);
+}
+async function renderSavedPosts(){
+ const feed=document.getElementById("feed");
+ feed.innerHTML="";
+ for(const post of data.posts){await insertPost(post,false);await yieldMain();}
+}
+function toggleLike(btn){btn.classList.toggle("active");btn.textContent=btn.classList.contains("active")?"♥":"♡";}
+function sharePost(){toast("Copied to your house.");}
+async function deletePost(id,button){
+ if(!confirm("Delete this post?"))return;
+ const post=data.posts.find(p=>p.id===id);
+ data.posts=data.posts.filter(p=>p.id!==id);
+ saveData();
+ if(post&&post.media){
+  const ids=post.media.map(m=>m.id).filter(Boolean);
+  ids.forEach(id=>{revokeThumb(id);revokeOriginal(id);});
+  try{await MediaDB.deleteMany(ids);}catch(e){}
+ }
+ if(button)button.closest("article").remove();
+ toast("Post deleted.");
+}
+async function clearArchive(){
+ if(!confirm("Clear the entire local archive on this device? This cannot be undone."))return;
+ closeLightbox();
+ thumbUrlCache.forEach(function(url){URL.revokeObjectURL(url);});
+ originalUrlCache.forEach(function(url){URL.revokeObjectURL(url);});
+ thumbUrlCache.clear();
+ originalUrlCache.clear();
+ stagedFiles.forEach(x=>{if(x._tempUrl)URL.revokeObjectURL(x._tempUrl);});
+ stagedFiles=[];
+ previewRenderedCount=0;
+ const grid=document.getElementById("previewGrid");
+ if(grid)grid.innerHTML="";
+ try{await MediaDB.clearAll();}catch(e){}
+ data.posts=[];
+ data.vault=[];
+ saveData();
+ document.getElementById("feed").innerHTML="";
+ renderVault();
+ renderStories();
+ toast("Local archive cleared.");
+}
+async function openLightbox(mediaId){
+ const url=await resolveMediaUrl(mediaId);
+ if(!url){toast("Media not found.");return;}
+ const lb=document.getElementById("lightbox");
+ const img=document.getElementById("lightboxImg");
+ const vid=document.getElementById("lightboxVideo");
+ const row=await MediaDB.get(mediaId);
+ const isVideo=row&&row.type&&row.type.startsWith("video/");
+ img.classList.add("hidden");vid.classList.add("hidden");
+ if(isVideo){vid.classList.remove("hidden");vid.src=url;}
+ else{img.classList.remove("hidden");img.src=url;}
+ lb.classList.remove("hidden");
+ document.body.style.overflow="hidden";
+}
+function closeLightbox(){
+ const lb=document.getElementById("lightbox");
+ const img=document.getElementById("lightboxImg");
+ const vid=document.getElementById("lightboxVideo");
+ lb.classList.add("hidden");
+ img.src="";vid.pause();vid.src="";
+ originalUrlCache.forEach(function(url){URL.revokeObjectURL(url);});
+ originalUrlCache.clear();
+ document.body.style.overflow="";
+}
+document.getElementById("adultInput").addEventListener("change",async function(e){
+ const files=Array.from(e.target.files||[]);
+ e.target.value="";
+ if(!files.length)return;
+ toast("Saving to vault…");
+ const items=files.map(file=>({id:crypto.randomUUID(),file,type:file.type,name:file.name}));
+ const result=await writeBlobsSequential(items);
+ result.saved.forEach(item=>{data.vault.push({id:item.id,type:item.type,name:item.name});});
+ saveData();
+ renderVault();
+ toast(result.failed.length?"Vault saved with "+result.failed.length+" skipped.":"Added to private vault.");
+});
+async function renderVault(){
+ const grids=["vaultGrid","vaultGridModal"].map(function(id){return document.getElementById(id);}).filter(Boolean);
+ grids.forEach(function(grid){grid.innerHTML="";});
+ for(const item of data.vault){
+  const url=await resolveThumbUrl(item.id);
+  grids.forEach(function(grid){
+   const tile=document.createElement("div");
+   tile.className="mediaTile";
+   tile.innerHTML='<img src="'+url+'" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+item.id+'\')">';
+   grid.appendChild(tile);
+  });
+  await yieldMain();
+ }
+}
+function openSearch(){document.getElementById("searchModal").classList.remove("hidden");document.getElementById("searchInput").focus();}
+function closeSearch(){document.getElementById("searchModal").classList.add("hidden");}
+function runSearch(q){
+ q=String(q||"").toLowerCase().trim();
+ const box=document.getElementById("searchResults");
+ if(!q){box.innerHTML="";return;}
+ const hits=(data.posts||[]).filter(p=>((p.caption||"")+" "+(p.creator||"")+" "+(p.category||"")).toLowerCase().indexOf(q)!==-1);
+ box.innerHTML=hits.length?hits.map(p=>'<div class="card p-4 text-black" style="background:#fff"><b class="text-xs">'+escapeHTML(p.creator)+'</b><div class="text-sm mt-1">'+escapeHTML(p.caption)+'</div></div>').join(""):'<div class="text-sm opacity-50">No matches.</div>';
+}
+document.getElementById("photoInput").addEventListener("change",e=>{handleFiles(e.target.files);e.target.value="";});
+document.getElementById("videoInput").addEventListener("change",e=>{handleFiles(e.target.files);e.target.value="";});
+const uploadArea=document.querySelector(".upload");
+["dragenter","dragover"].forEach(n=>{uploadArea.addEventListener(n,e=>{e.preventDefault();uploadArea.style.borderColor="#e7c35a";});});
+["dragleave","drop"].forEach(n=>{uploadArea.addEventListener(n,e=>{e.preventDefault();uploadArea.style.borderColor="";});});
+uploadArea.addEventListener("drop",e=>{handleFiles(e.dataTransfer.files);});
+(async function init(){
+ data=loadData();
+ (data.posts||[]).forEach(p=>{(p.media||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url;});});
+ (data.vault||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url;});
+ try{await MediaDB.open();}catch(e){toast("Local media storage unavailable.");}
+ renderStories();renderDiscover();renderProducts();renderGames();renderLinks();
+ await renderVault();
+ await renderSavedPosts();
+})();
 </script>
 </body>
 </html>
