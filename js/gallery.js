@@ -1,0 +1,2 @@
+// FISSHHFILET GALLERIES
+const FISSHHFILET_GALLERY = { open(id){ console.log('FISSHHFILET GALLERY', id) } };
