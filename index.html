@@ -152,9 +152,14 @@ async function resolveThumbUrl(mediaId){
  try{
   const row=await MediaDB.get(mediaId);
   if(!row)return"";
-  const src=row.thumb||row.blob;
-  if(!src)return"";
-  const url=URL.createObjectURL(src);
+  if(row.thumb){
+   const url=URL.createObjectURL(row.thumb);
+   thumbUrlCache.set(mediaId,url);
+   return url;
+  }
+  if(row.type&&row.type.startsWith("video/"))return"";
+  if(!row.blob)return"";
+  const url=URL.createObjectURL(row.blob);
   thumbUrlCache.set(mediaId,url);
   return url;
  }catch(e){return"";}
@@ -364,7 +369,8 @@ async function renderPreviewProgressive(reset){
   const tile=document.createElement("div");
   tile.className="mediaTile";
   tile.dataset.id=item.id;
-  tile.innerHTML='<div style="width:100%;height:100%;background:#ddd"></div><button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>';
+  const isVid=item.type.startsWith("video/");
+  tile.innerHTML=(isVid?'<div style="width:100%;height:100%;background:#111;display:flex;align-items:center;justify-content:center;color:#f6f1e7;font-size:10px;letter-spacing:.2em">VIDEO</div>':'<div style="width:100%;height:100%;background:#ddd"></div>')+'<button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>';
   grid.appendChild(tile);
   try{
    const thumb=await makeThumb(item);
@@ -375,7 +381,8 @@ async function renderPreviewProgressive(reset){
     const img=document.createElement("img");
     img.src=url;img.loading="lazy";
     tile.insertBefore(img,tile.firstChild);
-    tile.querySelector("div").remove();
+    const ph=tile.querySelector("div");
+    if(ph)ph.remove();
    }
   }catch(e){}
   await yieldMain();
@@ -453,10 +460,17 @@ async function insertPost(post,prepend=false){
  let mediaHtml='<div class="w-full aspect-[4/5] bg-black"></div>';
  if(first){
   const url=await resolveThumbUrl(first.id);
+  const open='onclick="openLightbox(\''+first.id+'\')"';
   if(first.type&&first.type.startsWith("video/")){
-   mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+first.id+'\')"><div class="absolute bottom-4 left-4 text-[10px] tracking-widest">VIDEO</div>';
+   if(url){
+    mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" '+open+'><div class="absolute bottom-4 left-4 text-[10px] tracking-widest">VIDEO</div>';
+   }else{
+    mediaHtml='<button type="button" class="w-full aspect-[4/5] flex flex-col items-center justify-center bg-black text-[#f6f1e7]" style="cursor:zoom-in" '+open+'><span class="display text-2xl tracking-[.2em]">VIDEO</span><span class="text-[10px] opacity-50 mt-2">TAP TO PLAY</span></button>';
+   }
+  }else if(url){
+   mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" '+open+'>';
   }else{
-   mediaHtml='<img src="'+url+'" class="w-full aspect-[4/5] object-cover" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+first.id+'\')">';
+   mediaHtml='<button type="button" class="w-full aspect-[4/5] flex items-center justify-center bg-black text-[#f6f1e7] text-[10px] tracking-widest" '+open+'>PHOTO</button>';
   }
  }
  article.innerHTML='<div class="relative bg-black">'+mediaHtml+'<div class="absolute top-4 left-4"><span class="bg-black/75 text-white rounded-full px-3 py-2 text-[9px]">'+escapeHTML(post.category)+'</span></div></div><div class="p-5"><div class="flex justify-between items-center mb-3"><b class="text-xs">'+escapeHTML(post.creator)+'</b><span class="text-[9px] opacity-40">JUST NOW</span></div><p class="text-[15px] leading-6">'+escapeHTML(post.caption)+'</p><div class="flex gap-2 mt-5"><button onclick="toggleLike(this)" class="like w-10 h-10 rounded-full bg-black/10">♡</button><button onclick="sharePost()" class="w-10 h-10 rounded-full bg-black/10">↗</button><button onclick="deletePost(\''+post.id+'\',this)" class="ml-auto w-10 h-10 rounded-full bg-black/10">🗑</button></div></div>';
@@ -545,10 +559,17 @@ async function renderVault(){
  grids.forEach(function(grid){grid.innerHTML="";});
  for(const item of data.vault){
   const url=await resolveThumbUrl(item.id);
+  const isVid=item.type&&item.type.startsWith("video/");
   grids.forEach(function(grid){
    const tile=document.createElement("div");
    tile.className="mediaTile";
-   tile.innerHTML='<img src="'+url+'" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+item.id+'\')">';
+   if(url){
+    tile.innerHTML='<img src="'+url+'" loading="lazy" style="cursor:zoom-in" onclick="openLightbox(\''+item.id+'\')">';
+   }else if(isVid){
+    tile.innerHTML='<button type="button" style="width:100%;height:100%;background:#111;color:#f6f1e7;letter-spacing:.2em;font-size:10px" onclick="openLightbox(\''+item.id+'\')">VIDEO</button>';
+   }else{
+    tile.innerHTML='<button type="button" style="width:100%;height:100%;background:#111;color:#f6f1e7;font-size:10px" onclick="openLightbox(\''+item.id+'\')">PHOTO</button>';
+   }
    grid.appendChild(tile);
   });
   await yieldMain();
