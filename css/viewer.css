@@ -1,0 +1,4 @@
+.viewer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.viewer-overlay.open{display:flex}
+.viewer-overlay img{max-width:90vw;max-height:90vh}
+.close{position:absolute;top:20px;right:20px;color:#fff;font-size:20px;cursor:pointer;letter-spacing:4px}
