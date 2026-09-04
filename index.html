@@ -48,13 +48,42 @@ button,input,textarea{font:inherit}button{cursor:pointer}img,video{display:block
 <div id="lightbox" class="hidden" onclick="closeLightbox()"><button style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff">✕</button><img id="lightboxImg" class="hidden"><video id="lightboxVideo" class="hidden" controls playsinline></video></div>
 <div id="toast"></div>
 <script>
-const APP_KEY="fisshhfilet_house_data_v6";const MEDIA_DB_NAME="fisshhfilet_media_v1";const MEDIA_STORE="blobs";const WRITE_CONCURRENCY=5;const PREVIEW_BATCH=18;
+const APP_KEY="fisshhfilet_house_data_v6";const MEDIA_DB_NAME="fisshhfilet_media_v1";const MEDIA_STORE="blobs";const PREVIEW_BATCH=18;
 const defaultData={posts:[],vault:[],products:[{name:"ARCHIVE TOTE",category:"OBJECT",image:"https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=800&q=80",link:"https://www.farfetch.com"},{name:"EDITORIAL SUNGLASSES",category:"STYLE",image:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&q=80",link:"https://www.farfetch.com"},{name:"STUDIO CHAIR",category:"HOME",image:"https://images.unsplash.com/photo-1503602642458-232111445657?w=800&q=80",link:"https://www.sothebys.com"},{name:"TRAVEL OBJECT",category:"TRAVEL",image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",link:"https://www.farfetch.com"}],games:[{question:"Will outdoor dining stay popular through winter?",options:["YES","NO"]},{question:"Will a new cultural hotspot appear downtown?",options:["YES","NO"]},{question:"Will short-form video dominate tonight?",options:["YES","NO"]}],links:[["GUCCI","https://www.gucci.com"],["PRADA","https://www.prada.com"],["LOUIS VUITTON","https://www.louisvuitton.com"],["HERMES","https://www.hermes.com"],["FARFETCH","https://www.farfetch.com"],["SOTHEBYS","https://www.sothebys.com"],["WHOLE FOODS","https://www.wholefoodsmarket.com"],["SPOTIFY","https://open.spotify.com"],["YOUTUBE","https://www.youtube.com"],["PINTEREST","https://www.pinterest.com"],["INSTAGRAM","https://www.instagram.com"],["TIKTOK","https://www.tiktok.com"],["X","https://x.com"]]};
 let data=null;let stagedFiles=[];let previewRenderedCount=0;const urlCache=new Map();
 const MediaDB={db:null,open(){return new Promise((resolve,reject)=>{if(this.db)return resolve(this.db);const req=indexedDB.open(MEDIA_DB_NAME,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(MEDIA_STORE))db.createObjectStore(MEDIA_STORE,{keyPath:"id"})};req.onsuccess=()=>{this.db=req.result;resolve(this.db)};req.onerror=()=>reject(req.error)})},async put(id,blob,meta={}){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readwrite");tx.objectStore(MEDIA_STORE).put({id,blob,type:meta.type||blob.type||"application/octet-stream",name:meta.name||"",created:Date.now()});tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})},async get(id){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readonly");const req=tx.objectStore(MEDIA_STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})},async delete(id){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readwrite");tx.objectStore(MEDIA_STORE).delete(id);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})},async deleteMany(ids){if(!ids||!ids.length)return;const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,"readwrite");const store=tx.objectStore(MEDIA_STORE);ids.forEach(id=>store.delete(id));tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}};
 async function resolveMediaUrl(mediaId){if(!mediaId)return"";if(urlCache.has(mediaId))return urlCache.get(mediaId);try{const row=await MediaDB.get(mediaId);if(!row||!row.blob)return"";const url=URL.createObjectURL(row.blob);urlCache.set(mediaId,url);return url}catch(e){return""}}
 function revokeMediaUrl(mediaId){if(urlCache.has(mediaId)){URL.revokeObjectURL(urlCache.get(mediaId));urlCache.delete(mediaId)}}
-async function writeBlobsBatched(items,onProgress){const queue=items.slice();let done=0;const total=items.length;const workers=[];async function worker(){while(queue.length){const item=queue.shift();try{await MediaDB.put(item.id,item.file||item.blob,{type:item.type,name:item.name})}catch(e){}done++;if(onProgress)onProgress(done,total)}}const n=Math.min(WRITE_CONCURRENCY,Math.max(1,total));for(let i=0;i<n;i++)workers.push(worker());await Promise.all(workers)}
+async function writeBlobsBatched(items,onProgress){
+ const queue=items.slice();let done=0;const total=items.length;
+ const hasVideo=items.some(i=>i.type&&i.type.startsWith("video/"));
+ const WRITE_CONCURRENCY=hasVideo?1:5;
+ const workers=[];
+ async function worker(){
+  while(queue.length){
+   const item=queue.shift();
+   if(onProgress) onProgress(done,total);
+   try{
+    if(item.file&&item.file.size>100*1024*1024){
+     toast("Video too big: "+Math.round(item.file.size/1024/1024)+"MB. Use 720p.");
+     stagedFiles=stagedFiles.filter(x=>x.id!==item.id);
+     done++; if(onProgress) onProgress(done,total);
+     continue;
+    }
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),20000));
+    await Promise.race([MediaDB.put(item.id,item.file||item.blob,{type:item.type,name:item.name}),timeout]);
+   }catch(e){
+    console.warn("IDB put failed",item.id,e);
+    if(e.message==="timeout"){toast("Video save timed out - try smaller"); stagedFiles=stagedFiles.filter(x=>x.id!==item.id);}
+   }
+   done++; if(onProgress) onProgress(done,total);
+   await new Promise(r=>setTimeout(r,0));
+  }
+ }
+ const n=Math.min(WRITE_CONCURRENCY,Math.max(1,total));
+ for(let i=0;i<n;i++) workers.push(worker());
+ await Promise.all(workers);
+}
 function loadData(){try{const saved=localStorage.getItem(APP_KEY);if(saved){const parsed=JSON.parse(saved);return{...structuredClone(defaultData),...parsed}}}catch(e){}return structuredClone(defaultData)}
 function saveData(){try{const clean=structuredClone(data);(clean.posts||[]).forEach(p=>{(p.media||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url})});(clean.vault||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url});localStorage.setItem(APP_KEY,JSON.stringify(clean))}catch(e){toast("Storage limit reached.")}}
 function enterHouse(){localStorage.setItem("age_verified","21");document.getElementById("ageGate").classList.add("hidden");toast("Welcome to FISSHHFILET.")}function leaveHouse(){location.href="https://www.google.com"}if(localStorage.getItem("age_verified")==="21"){document.getElementById("ageGate").classList.add("hidden")}
@@ -67,7 +96,19 @@ function renderProducts(){document.getElementById("products").innerHTML=data.pro
 function renderGames(){document.getElementById("games").innerHTML=data.games.map(g=>'<div class="gameCard"><div class="text-sm mb-3">'+escapeHTML(g.question)+'</div><div class="flex gap-2">'+g.options.map(o=>'<button class="chip" onclick="toast(\''+o+'\')">'+o+'</button>').join("")+'</div></div>').join("")}
 function renderLinks(){document.getElementById("links").innerHTML=data.links.map(pair=>'<a class="linkRow" href="'+pair[1]+'" target="_blank"><span class="text-xs tracking-wide">'+escapeHTML(pair[0])+'</span><span class="opacity-40 text-xs">↗</span></a>').join("")}
 function openCreate(){document.getElementById("createModal").classList.remove("hidden")}function closeCreate(){document.getElementById("createModal").classList.add("hidden")}
-function handleFiles(files){const incoming=Array.from(files||[]);let photos=stagedFiles.filter(f=>f.type.startsWith("image/")).length;let videos=stagedFiles.filter(f=>f.type.startsWith("video/")).length;for(const file of incoming){if(file.type.startsWith("image/")&&photos>=100){toast("Photo batch limit reached.");break}if(file.type.startsWith("video/")&&videos>=20){toast("Video batch limit reached.");break}const id=crypto.randomUUID();stagedFiles.push({id,file,type:file.type,name:file.name});if(file.type.startsWith("image/"))photos++;else if(file.type.startsWith("video/"))videos++}previewRenderedCount=0;renderPreviewProgressive(true)}
+function handleFiles(files){
+ const incoming=Array.from(files||[]);
+ let photos=stagedFiles.filter(f=>f.type.startsWith("image/")).length;
+ let videos=stagedFiles.filter(f=>f.type.startsWith("video/")).length;
+ for(const file of incoming){
+  if(file.size>100*1024*1024){toast(file.name+" is "+Math.round(file.size/1024/1024)+"MB - too big. Use 720p.");continue}
+  if(file.type.startsWith("image/")&&photos>=100){toast("Photo batch limit reached.");break}
+  if(file.type.startsWith("video/")&&videos>=20){toast("Video batch limit reached.");break}
+  const id=crypto.randomUUID();stagedFiles.push({id,file,type:file.type,name:file.name});
+  if(file.type.startsWith("image/"))photos++;else if(file.type.startsWith("video/"))videos++;
+ }
+ previewRenderedCount=0;renderPreviewProgressive(true);
+}
 function renderPreviewProgressive(reset){const grid=document.getElementById("previewGrid");if(reset){grid.innerHTML="";previewRenderedCount=0}const start=previewRenderedCount;const end=Math.min(stagedFiles.length,start+PREVIEW_BATCH);const slice=stagedFiles.slice(start,end);slice.forEach(item=>{const tile=document.createElement("div");tile.className="mediaTile";tile.dataset.id=item.id;const url=URL.createObjectURL(item.file);item._tempUrl=url;if(item.type.startsWith("image/")){tile.innerHTML='<img src="'+url+'" loading="lazy"><button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>'}else{tile.innerHTML='<video src="'+url+'" muted playsinline preload="metadata"></video><button class="deleteMedia" onclick="removeStaged(\''+item.id+'\')">×</button>'}grid.appendChild(tile)});previewRenderedCount=end;const photos=stagedFiles.filter(x=>x.type.startsWith("image/")).length;const videos=stagedFiles.filter(x=>x.type.startsWith("video/")).length;document.getElementById("uploadStats").textContent=photos+" photos • "+videos+" videos selected"+(previewRenderedCount<stagedFiles.length?" • showing "+previewRenderedCount+"/"+stagedFiles.length:"");if(previewRenderedCount<stagedFiles.length){requestAnimationFrame(()=>renderPreviewProgressive(false))}}
 function removeStaged(id){const idx=stagedFiles.findIndex(x=>x.id===id);if(idx===-1)return;const item=stagedFiles[idx];if(item._tempUrl){URL.revokeObjectURL(item._tempUrl);item._tempUrl=null}stagedFiles.splice(idx,1);previewRenderedCount=0;renderPreviewProgressive(true)}
 async function publishPost(){if(!stagedFiles.length){toast("Add at least one photo or video.");return}const caption=document.getElementById("captionInput").value.trim()||"New discovery.";const creator=document.getElementById("creatorInput").value.trim()||"CREATOR";const category=document.getElementById("categoryInput").value.trim()||"DISCOVERY";const btn=document.getElementById("publishBtn");const progressEl=document.getElementById("uploadProgress");const bar=progressEl.querySelector("div");btn.disabled=true;btn.textContent="SAVING…";progressEl.classList.remove("hidden");bar.style.width="0%";const mediaMeta=stagedFiles.map(x=>({id:x.id,type:x.type,name:x.name}));try{await writeBlobsBatched(stagedFiles,(done,total)=>{bar.style.width=Math.round((done/total)*100)+"%"});const post={id:crypto.randomUUID(),caption,creator,category,created:Date.now(),media:mediaMeta};data.posts.unshift(post);saveData();await insertPost(post,true);stagedFiles.forEach(x=>{if(x._tempUrl)URL.revokeObjectURL(x._tempUrl)});stagedFiles=[];previewRenderedCount=0;document.getElementById("previewGrid").innerHTML="";document.getElementById("uploadStats").textContent="";document.getElementById("captionInput").value="";document.getElementById("creatorInput").value="";document.getElementById("categoryInput").value="";closeCreate();toast("Published to FISSHHFILET.");window.scrollTo({top:0,behavior:"smooth"})}catch(e){console.error(e);toast("Publish failed.")}finally{btn.disabled=false;btn.textContent="PUBLISH";progressEl.classList.add("hidden");bar.style.width="0%"}}
@@ -83,4 +124,4 @@ const uploadArea=document.querySelector(".upload");["dragenter","dragover"].forE
 (async function init(){data=loadData();(data.posts||[]).forEach(p=>{(p.media||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url})});(data.vault||[]).forEach(m=>{if(m.url&&String(m.url).startsWith("blob:"))delete m.url});try{await MediaDB.open()}catch(e){toast("Local media storage unavailable.")}renderStories();renderDiscover();renderProducts();renderGames();renderLinks();await renderVault();await renderSavedPosts()})();
 </script>
 </body>
-                                                                                                                 </html>
+</html>
