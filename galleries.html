@@ -1,16 +1,16 @@
-<!DOCTYPE html><html lang="en" class="notranslate" translate="no"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="google" content="notranslate"><title>GALLERIES</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#000;color:#fff;font-family:Helvetica;min-height:100vh}.top{padding:18px;font-size:12px;letter-spacing:.5em;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center}.wide{width:100vw;height:70vh;background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden}.wide img{width:100%;height:100%;object-fit:cover}.bar{display:flex;gap:10px;padding:15px;justify-content:center;border-top:1px solid #222}.btn{background:#fff;color:#000;padding:12px 20px;border-radius:999px;font-size:10px;letter-spacing:.2em;font-weight:700;text-transform:uppercase}input{position:absolute;left:-9999px;opacity:0.01}a{color:#fff;text-decoration:none;font-size:9px;border:1px solid #333;padding:6px 12px;letter-spacing:.2em}</style></head><body>
-<div class="top"><span>FISSHHFILET</span><a href="index.html">← BACK</a></div>
-<div class="wide"><img id="img" src="" style="display:none"></div>
+<!DOCTYPE html><html lang="en" class="notranslate" translate="no"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="google" content="notranslate"><title>GALLERIES</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#000;color:#fff;font-family:Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column}.top{padding:22px 24px;display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.45em}.center{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}.big{font-size:clamp(42px,11vw,110px);font-weight:700;letter-spacing:-0.03em;line-height:0.9;text-align:center}.imgwrap{width:100%;display:flex;justify-content:center;padding:0 24px}.imgwrap img{width:100%;max-width:900px;max-height:72vh;object-fit:cover;display:none}.bar{padding:28px 24px;display:flex;justify-content:center}.btn{background:#fff;color:#000;padding:14px 28px;border-radius:999px;font-size:10px;letter-spacing:.2em;font-weight:600;border:0} input{position:absolute;left:-9999px;opacity:0} a.back{color:#fff;text-decoration:none;font-size:9px;letter-spacing:.2em;border:1px solid #222;padding:8px 14px}</style></head><body>
+<div class="top"><span>FISSHHFILET</span><a class="back" href="index.html">← BACK</a></div>
+<div class="center"><div class="big">Restocking<br>Soon</div></div>
+<div class="imgwrap"><img id="img"></div>
 <div class="bar"><label for="f" class="btn">UPLOAD PHOTO GALLERY</label><input type="file" id="f" accept="image/*"></div>
-<div id="s" style="text-align:center;font-size:9px;opacity:.4;padding:10px;letter-spacing:.2em">Android 15 - image will STAY after refresh</div>
 <script>
-const f=document.getElementById('f'), img=document.getElementById('img'), s=document.getElementById('s');
+const f=document.getElementById('f'), img=document.getElementById('img');
 const saved=localStorage.getItem('fisshh_img');
-if(saved){img.src=saved; img.style.display='block'; s.textContent='Loaded - stays';}
+if(saved){img.src=saved; img.style.display='block';}
 f.addEventListener('change',e=>{
  const file=e.target.files[0]; if(!file) return;
  const r=new FileReader();
- r.onload=ev=>{ img.src=ev.target.result; img.style.display='block'; localStorage.setItem('fisshh_img', ev.target.result); s.textContent='Saved: '+file.name+' - STAYS NOW'; };
+ r.onload=ev=>{ img.src=ev.target.result; img.style.display='block'; localStorage.setItem('fisshh_img', ev.target.result); };
  r.readAsDataURL(file);
 });
 </script>
