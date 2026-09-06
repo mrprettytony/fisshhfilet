@@ -1,27 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FISSHHFILET — HOUSE</title>
-<link rel="stylesheet" href="css/house.css"/>
-<link rel="stylesheet" href="css/mobile.css"/>
-<link rel="stylesheet" href="css/viewer.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<title>FISSHHFILET</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:#000;
+    color:#fff;
+    font-family: Helvetica, Arial, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    letter-spacing:0.2em;
+  }
+  .top{
+    font-size:10px;
+    opacity:0.6;
+    margin-bottom:40px;
+    text-align:center;
+    line-height:1.8;
+  }
+  h1{
+    font-size:14px;
+    font-weight:400;
+    letter-spacing:0.6em;
+    margin-bottom:60px;
+  }
+  .menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    width:90%;
+    max-width:340px;
+  }
+  .btn{
+    border:1px solid #222;
+    padding:16px;
+    text-align:center;
+    font-size:9px;
+    letter-spacing:0.3em;
+    text-decoration:none;
+    color:#fff;
+    display:block;
+    transition:0.2s;
+  }
+  .btn:hover{border-color:#fff;background:#111}
+  .footer{
+    margin-top:60px;
+    font-size:7px;
+    opacity:0.3;
+    letter-spacing:0.4em;
+  }
+</style>
 </head>
 <body>
-  <header class="header">
-    <h1>FISSHHFILET</h1>
-    <p>FISSHHFILET HOUSE — ARCHIVE — OBJECTS — GALLERIES — VIDEO</p>
-  </header>
-  <nav class="house-nav">
-    <a class="house-link" href="pages/galleries/">FISSHHFILET GALLERIES</a>
-    <a class="house-link" href="pages/video/">FISSHHFILET VIDEO</a>
-    <a class="house-link" href="pages/objects/">FISSHHFILET OBJECTS</a>
-    <a class="house-link" href="pages/creators/">FISSHHFILET CREATORS</a>
-    <a class="house-link" href="pages/archive/">FISSHHFILET ARCHIVE</a>
-  </nav>
-  <footer class="footer">FISSHHFILET HOUSE © 2026</footer>
-<script src="js/store.js"></script>
-<script src="js/app.js"></script>
+  <div class="top">FISSHHFILET HOUSE — ARCHIVE — OBJECTS — GALLERIES — VIDEO</div>
+  <h1>FISSHHFILET</h1>
+  <div class="menu">
+    <a class="btn" href="#">FISSHHFILET GALLERIES</a>
+    <a class="btn" href="#">FISSHHFILET VIDEO</a>
+    <a class="btn" href="#">FISSHHFILET OBJECTS</a>
+    <a class="btn" href="#">FISSHHFILET CREATORS</a>
+    <a class="btn" href="#">FISSHHFILET ARCHIVE</a>
+  </div>
+  <div class="footer">FISSHHFILET HOUSE © 2026</div>
 </body>
 </html>
